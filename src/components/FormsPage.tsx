@@ -36,10 +36,32 @@ export const FormsPage: React.FC<FormsPageProps> = ({
 }) => {
   const isAmharic = lang === 'am';
 
+  const canShowRegistration = userRole === 'clerk' || userRole === 'admin';
+  const canShowOfficer = userRole === 'admin';
+  const canShowPrint = userRole === 'admin' || userRole === 'printing_press';
+
   // Active form tab: 'registration' | 'officer' | 'print'
-  const [activeFormTab, setActiveFormTab] = useState<'registration' | 'officer' | 'print'>(
-    userRole === 'admin' ? 'print' : 'registration'
-  );
+  const getInitialTab = (): 'registration' | 'officer' | 'print' => {
+    if (userRole === 'printing_press') return 'print';
+    if (userRole === 'officer') return 'officer';
+    return 'registration';
+  };
+
+  const [activeFormTab, setActiveFormTab] = useState<'registration' | 'officer' | 'print'>(getInitialTab);
+
+  // Sync tab if userRole changes
+  React.useEffect(() => {
+    if (activeFormTab === 'registration' && !canShowRegistration) {
+      if (canShowPrint) setActiveFormTab('print');
+      else if (canShowOfficer) setActiveFormTab('officer');
+    } else if (activeFormTab === 'officer' && !canShowOfficer) {
+      if (canShowRegistration) setActiveFormTab('registration');
+      else if (canShowPrint) setActiveFormTab('print');
+    } else if (activeFormTab === 'print' && !canShowPrint) {
+      if (canShowRegistration) setActiveFormTab('registration');
+      else if (canShowOfficer) setActiveFormTab('officer');
+    }
+  }, [userRole, activeFormTab, canShowRegistration, canShowOfficer, canShowPrint]);
 
   // --- FORM 1: MOTORCYCLE REGISTRATION STATE ---
   const [fullName, setFullName] = useState('');
@@ -229,19 +251,21 @@ export const FormsPage: React.FC<FormsPageProps> = ({
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          <button
-            type="button"
-            onClick={() => setActiveFormTab('registration')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeFormTab === 'registration'
-                ? 'bg-primary text-white shadow-xs'
-                : 'bg-surface-container text-secondary hover:text-on-surface'
-            }`}
-          >
-            {isAmharic ? 'ምዝገባ' : 'Registration'}
-          </button>
+          {canShowRegistration && (
+            <button
+              type="button"
+              onClick={() => setActiveFormTab('registration')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                activeFormTab === 'registration'
+                  ? 'bg-primary text-white shadow-xs'
+                  : 'bg-surface-container text-secondary hover:text-on-surface'
+              }`}
+            >
+              {isAmharic ? 'ምዝገባ' : 'Registration'}
+            </button>
+          )}
 
-          {(userRole === 'admin' || userRole === 'officer') && (
+          {canShowOfficer && (
             <button
               type="button"
               onClick={() => setActiveFormTab('officer')}
@@ -255,7 +279,7 @@ export const FormsPage: React.FC<FormsPageProps> = ({
             </button>
           )}
 
-          {(userRole === 'admin' || userRole === 'printing_press') && (
+          {canShowPrint && (
             <button
               type="button"
               onClick={() => setActiveFormTab('print')}

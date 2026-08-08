@@ -367,24 +367,26 @@ export const HomePage: React.FC<HomePageProps> = ({
           </button>
 
           {/* Register / Print Page */}
-          <button
-            type="button"
-            onClick={() => setActivePage('forms')}
-            className={`flex-1 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2 px-2 sm:px-4 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activePage === 'forms'
-                ? 'bg-primary text-white shadow-xs'
-                : 'text-secondary hover:text-on-surface hover:bg-surface-container'
-            }`}
-          >
-            <span className="material-symbols-outlined text-[20px] sm:text-[22px]">
-              {userRole === 'admin' ? 'print' : 'how_to_reg'}
-            </span>
-            <span className="text-[10px] sm:text-xs tracking-tight text-center sm:text-left">
-              {userRole === 'admin'
-                ? (isAmharic ? 'ሕትመት' : 'Print')
-                : (isAmharic ? 'ምዝገባ' : 'Register')}
-            </span>
-          </button>
+          {userRole !== 'officer' && (
+            <button
+              type="button"
+              onClick={() => setActivePage('forms')}
+              className={`flex-1 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2 px-2 sm:px-4 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                activePage === 'forms'
+                  ? 'bg-primary text-white shadow-xs'
+                  : 'text-secondary hover:text-on-surface hover:bg-surface-container'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[20px] sm:text-[22px]">
+                {(userRole === 'admin' || userRole === 'printing_press') ? 'print' : 'how_to_reg'}
+              </span>
+              <span className="text-[10px] sm:text-xs tracking-tight text-center sm:text-left">
+                {(userRole === 'admin' || userRole === 'printing_press')
+                  ? (isAmharic ? 'ሕትመት' : 'Print')
+                  : (isAmharic ? 'ምዝገባ' : 'Register')}
+              </span>
+            </button>
+          )}
 
           {/* Records Page */}
           <button

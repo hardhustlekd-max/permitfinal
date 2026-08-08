@@ -34,8 +34,31 @@ export const TablesPage: React.FC<TablesPageProps> = ({
 }) => {
   const isAmharic = lang === 'am';
 
+  const canShowRegistration = userRole === 'clerk' || userRole === 'admin' || userRole === 'officer'; // officers might need to search registrations. Wait, maybe just admin & clerk. Let's make it admin, clerk, officer for viewing
+  const canShowOfficer = userRole === 'admin' || userRole === 'officer';
+  const canShowPrint = userRole === 'admin' || userRole === 'printing_press';
+
   // Table category tab: 'registrations' | 'officers' | 'print_orders'
-  const [activeTableTab, setActiveTableTab] = useState<'registrations' | 'officers' | 'print_orders'>('registrations');
+  const getInitialTab = (): 'registrations' | 'officers' | 'print_orders' => {
+    if (userRole === 'printing_press') return 'print_orders';
+    if (userRole === 'officer') return 'officers';
+    return 'registrations';
+  };
+
+  const [activeTableTab, setActiveTableTab] = useState<'registrations' | 'officers' | 'print_orders'>(getInitialTab);
+
+  React.useEffect(() => {
+    if (activeTableTab === 'registrations' && !canShowRegistration) {
+      if (canShowPrint) setActiveTableTab('print_orders');
+      else if (canShowOfficer) setActiveTableTab('officers');
+    } else if (activeTableTab === 'officers' && !canShowOfficer) {
+      if (canShowRegistration) setActiveTableTab('registrations');
+      else if (canShowPrint) setActiveTableTab('print_orders');
+    } else if (activeTableTab === 'print_orders' && !canShowPrint) {
+      if (canShowRegistration) setActiveTableTab('registrations');
+      else if (canShowOfficer) setActiveTableTab('officers');
+    }
+  }, [userRole, activeTableTab, canShowRegistration, canShowOfficer, canShowPrint]);
 
   // --- REGISTRATIONS TABLE STATE ---
   const [regSearch, setRegSearch] = useState('');
@@ -118,6 +141,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({
       {/* Combined Tab Header */}
       <div className="bg-surface-container/50 border-b border-outline-variant px-3 sm:px-4 pt-2">
         <div className="flex gap-4 sm:gap-6 overflow-x-auto text-xs font-bold">
+          {canShowRegistration && (
             <button
               type="button"
               onClick={() => setActiveTableTab('registrations')}
@@ -137,7 +161,9 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                 {registrations.length}
               </span>
             </button>
+          )}
 
+          {canShowOfficer && (
             <button
               type="button"
               onClick={() => setActiveTableTab('officers')}
@@ -157,7 +183,9 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                 {officers.length}
               </span>
             </button>
+          )}
 
+          {canShowPrint && (
             <button
               type="button"
               onClick={() => setActiveTableTab('print_orders')}
@@ -177,6 +205,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                 {printOrders.length}
               </span>
             </button>
+          )}
           </div>
         </div>
 
