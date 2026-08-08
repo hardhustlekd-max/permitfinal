@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Language,
   UserRole,
@@ -7,10 +7,15 @@ import {
   PrintBatchOrder,
 } from '../types';
 import {
-  initialRegistrations,
-  initialOfficerAssignments,
-  initialPrintBatchOrders,
-} from '../mockData';
+  getStoredRegistrations,
+  saveRegistrations,
+  getStoredOfficers,
+  saveOfficers,
+  getStoredPrintOrders,
+  savePrintOrders,
+  getStoredActivePage,
+  saveActivePage,
+} from '../utils/storage';
 import { ClerkDashboard } from './ClerkDashboard';
 import { AdminDashboard } from './AdminDashboard';
 import { PrintingPressDashboard } from './PrintingPressDashboard';
@@ -39,12 +44,37 @@ export const HomePage: React.FC<HomePageProps> = ({
   const isAmharic = currentLang === 'am';
 
   // Active top page navigation: 'dashboard' | 'forms' | 'tables' | 'workstation' | 'settings'
-  const [activePage, setActivePage] = useState<'dashboard' | 'forms' | 'tables' | 'workstation' | 'settings'>('dashboard');
+  const [activePage, setActivePage] = useState<'dashboard' | 'forms' | 'tables' | 'workstation' | 'settings'>(
+    () => getStoredActivePage()
+  );
 
-  // Shared System State
-  const [registrations, setRegistrations] = useState<MotorcycleRegistration[]>(initialRegistrations);
-  const [officers, setOfficers] = useState<OfficerAssignment[]>(initialOfficerAssignments);
-  const [printOrders, setPrintOrders] = useState<PrintBatchOrder[]>(initialPrintBatchOrders);
+  // Shared System State initialized from LocalStorage
+  const [registrations, setRegistrations] = useState<MotorcycleRegistration[]>(
+    () => getStoredRegistrations()
+  );
+  const [officers, setOfficers] = useState<OfficerAssignment[]>(
+    () => getStoredOfficers()
+  );
+  const [printOrders, setPrintOrders] = useState<PrintBatchOrder[]>(
+    () => getStoredPrintOrders()
+  );
+
+  // Save changes to local storage whenever states update
+  useEffect(() => {
+    saveActivePage(activePage);
+  }, [activePage]);
+
+  useEffect(() => {
+    saveRegistrations(registrations);
+  }, [registrations]);
+
+  useEffect(() => {
+    saveOfficers(officers);
+  }, [officers]);
+
+  useEffect(() => {
+    savePrintOrders(printOrders);
+  }, [printOrders]);
 
   // Handlers for state updates
   const handleAddRegistration = (newReg: MotorcycleRegistration) => {

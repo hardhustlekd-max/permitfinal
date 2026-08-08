@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Language, UserRole } from '../types';
+import { getStoredSettings, saveSettings } from '../utils/storage';
 
 interface SettingsPageProps {
   lang: Language;
@@ -18,23 +19,40 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
 }) => {
   const isAmharic = lang === 'am';
 
-  // State for settings
-  const [officerName, setOfficerName] = useState('አበበ ደስታ (Abebe Desta)');
-  const [department, setDepartment] = useState('የትራፊክ ማኔጅመንትና ህግ ማስከበሪያ (Traffic Mgmt & Enforcement)');
-  const [subCityOffice, setSubCityOffice] = useState('ኮልፌ ቀራኒዮ ክፍለ ከተማ (Kolfe Keraniyo)');
-  const [defaultPrinter, setDefaultPrinter] = useState('Zebra ZD621 Industrial PVC Card Printer');
-  const [cardStockType, setCardStockType] = useState('CR80 Standard PVC Card (85.6 x 54 mm)');
-  const [calendarSystem, setCalendarSystem] = useState<'ethiopian' | 'gregorian'>('ethiopian');
-  const [autoPrintQR, setAutoPrintQR] = useState(true);
-  const [emailAlerts, setEmailAlerts] = useState(true);
-  const [security2FA, setSecurity2FA] = useState(true);
-  const [highRiskAlerts, setHighRiskAlerts] = useState(true);
+  // State for settings initialized from LocalStorage
+  const [settings, setSettingsState] = useState(() => getStoredSettings());
+
+  const [officerName, setOfficerName] = useState(settings.officerName);
+  const [department, setDepartment] = useState(settings.department);
+  const [subCityOffice, setSubCityOffice] = useState(settings.subCityOffice);
+  const [defaultPrinter, setDefaultPrinter] = useState(settings.defaultPrinter);
+  const [cardStockType, setCardStockType] = useState(settings.cardStockType);
+  const [calendarSystem, setCalendarSystem] = useState<'ethiopian' | 'gregorian'>(settings.calendarSystem);
+  const [autoPrintQR, setAutoPrintQR] = useState(settings.autoPrintQR);
+  const [emailAlerts, setEmailAlerts] = useState(settings.emailAlerts);
+  const [security2FA, setSecurity2FA] = useState(settings.security2FA);
+  const [highRiskAlerts, setHighRiskAlerts] = useState(settings.highRiskAlerts);
 
   // Save Feedback state
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
+    const updatedSettings = {
+      officerName,
+      department,
+      subCityOffice,
+      defaultPrinter,
+      cardStockType,
+      calendarSystem,
+      autoPrintQR,
+      emailAlerts,
+      security2FA,
+      highRiskAlerts,
+    };
+    saveSettings(updatedSettings);
+    setSettingsState(updatedSettings);
+
     setSavedSuccess(true);
     setTimeout(() => {
       setSavedSuccess(false);
