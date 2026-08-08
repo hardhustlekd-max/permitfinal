@@ -20,6 +20,7 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
   // State
   const [selectedRegIds, setSelectedRegIds] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'sheet' | 'manifest' | 'history'>('sheet');
+  const [mobileTab, setMobileTab] = useState<'config' | 'preview'>('config');
   const [facility, setFacility] = useState('Central Security Printing Facility #1');
   const [priority, setPriority] = useState<'standard' | 'express' | 'urgent'>('express');
   const [batchNotes, setBatchNotes] = useState('');
@@ -78,27 +79,28 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
     setSelectedRegIds([]);
     setBatchNotes('');
     setViewMode('history');
+    setMobileTab('preview');
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {/* Top Banner & Control Bar */}
-      <div className="bg-surface-container-lowest border border-outline-variant p-4 rounded-2xl shadow-xs space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-outline-variant pb-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-xs">
-              <span className="material-symbols-outlined text-[24px]">print</span>
+      <div className="bg-surface-container-lowest border border-outline-variant p-3 sm:p-4 rounded-2xl shadow-xs space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-outline-variant pb-3">
+          <div className="flex items-start sm:items-center gap-2.5 sm:gap-3">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-xs shrink-0 mt-0.5 sm:mt-0">
+              <span className="material-symbols-outlined text-[20px] sm:text-[24px]">print</span>
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="font-extrabold text-base text-on-surface">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <h2 className="font-extrabold text-sm sm:text-base text-on-surface">
                   {isAmharic ? 'የሕትመት ትእዛዝ እና ባች ማቀናበሪያ ማዕከል' : 'Order Batch Print Preview Station'}
                 </h2>
-                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded border bg-blue-100 text-blue-900 border-blue-300">
+                <span className="text-[9px] sm:text-[10px] font-black uppercase px-2 py-0.5 rounded border bg-blue-100 text-blue-900 border-blue-300">
                   ADMIN DISPATCH
                 </span>
               </div>
-              <p className="text-xs text-secondary mt-0.5">
+              <p className="text-[11px] sm:text-xs text-secondary mt-0.5">
                 {isAmharic
                   ? 'ለማተሚያ ቤት የሚላኩ የተፀደቁ የመታወቂያ ካርዶችን እና የQR ስቲከሮችን አስቀድመው ይገምግሙ'
                   : 'Inspect, layout, and preview physical ID card & QR sticker sheets before print dispatch'}
@@ -106,11 +108,11 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 self-start sm:self-auto w-full sm:w-auto">
             <button
               type="button"
               onClick={() => window.print()}
-              className="bg-surface-container-high hover:bg-surface-container-highest text-on-surface px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border border-outline-variant"
+              className="w-full sm:w-auto bg-surface-container-high hover:bg-surface-container-highest text-on-surface px-3 py-2 sm:py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 border border-outline-variant"
             >
               <span className="material-symbols-outlined text-[18px]">print</span>
               <span>{isAmharic ? 'የወረቀት ቅድመ-እይታ' : 'Print Sheet'}</span>
@@ -119,19 +121,20 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
         </div>
 
         {/* View Mode Tabs & Filter Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-1.5 bg-surface-container/60 p-1 rounded-xl border border-outline-variant/60">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5 sm:gap-3">
+          {/* Scrollable Horizontal Tabs for View Mode */}
+          <div className="flex items-center gap-1.5 bg-surface-container/60 p-1 rounded-xl border border-outline-variant/60 overflow-x-auto max-w-full scrollbar-none">
             <button
               type="button"
               onClick={() => setViewMode('sheet')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                 viewMode === 'sheet'
                   ? 'bg-blue-600 text-white shadow-xs'
                   : 'text-secondary hover:text-on-surface'
               }`}
             >
               <span className="material-symbols-outlined text-[16px]">grid_view</span>
-              <span>{isAmharic ? 'የካርድ ወረቀት እይታ' : 'Batch Card Sheet'}</span>
+              <span>{isAmharic ? 'የካርድ ወረቀት' : 'Batch Sheet'}</span>
               <span className="bg-white/20 text-white px-1.5 py-0.2 rounded text-[10px]">
                 {selectedRegIds.length}
               </span>
@@ -140,27 +143,27 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
             <button
               type="button"
               onClick={() => setViewMode('manifest')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                 viewMode === 'manifest'
                   ? 'bg-blue-600 text-white shadow-xs'
                   : 'text-secondary hover:text-on-surface'
               }`}
             >
               <span className="material-symbols-outlined text-[16px]">view_list</span>
-              <span>{isAmharic ? 'ማኒፌስት ዝርዝር' : 'Batch Manifest'}</span>
+              <span>{isAmharic ? 'ማኒፌስት' : 'Manifest'}</span>
             </button>
 
             <button
               type="button"
               onClick={() => setViewMode('history')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                 viewMode === 'history'
                   ? 'bg-blue-600 text-white shadow-xs'
                   : 'text-secondary hover:text-on-surface'
               }`}
             >
               <span className="material-symbols-outlined text-[16px]">history</span>
-              <span>{isAmharic ? 'የተላኩ ትእዛዞች' : 'Batch History'}</span>
+              <span>{isAmharic ? 'ታሪክ' : 'History'}</span>
               <span className="bg-slate-200 text-slate-800 px-1.5 py-0.2 rounded text-[10px] font-bold">
                 {printOrders.length}
               </span>
@@ -168,19 +171,19 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
           </div>
 
           {/* Quick Filters */}
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:flex md:items-center gap-2 w-full md:w-auto">
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder={isAmharic ? 'በስም ወይም ሰሌዳ ፈልግ...' : 'Filter by name or plate...'}
-              className="bg-surface-container border border-outline-variant rounded-xl px-3 py-1.5 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-blue-500 w-48"
+              placeholder={isAmharic ? 'በስም ወይም ሰሌዳ ፈልግ...' : 'Filter name/plate...'}
+              className="bg-surface-container border border-outline-variant rounded-xl px-3 py-2 sm:py-1.5 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-48"
             />
 
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value as 'all' | 'electric' | 'gas')}
-              className="bg-surface-container border border-outline-variant rounded-xl px-2.5 py-1.5 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="bg-surface-container border border-outline-variant rounded-xl px-2.5 py-2 sm:py-1.5 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
             >
               <option value="all">{isAmharic ? 'ሁሉም ዓይነቶች' : 'All Categories'}</option>
               <option value="electric">{isAmharic ? 'ኢቪ ብቻ (Ev)' : 'Electric (Ev)'}</option>
@@ -190,10 +193,46 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
         </div>
       </div>
 
+      {/* Mobile-Only Section Selector (Visible on small screens) */}
+      <div className="lg:hidden flex rounded-xl bg-surface-container-high p-1 border border-outline-variant">
+        <button
+          type="button"
+          onClick={() => setMobileTab('config')}
+          className={`flex-1 py-2 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+            mobileTab === 'config'
+              ? 'bg-primary text-white shadow-xs'
+              : 'text-secondary hover:text-on-surface'
+          }`}
+        >
+          <span className="material-symbols-outlined text-[16px]">rule</span>
+          <span>{isAmharic ? '1. ምረጥና ማስታወሻ' : '1. Batch Config'}</span>
+          <span className="bg-white/20 text-white px-1.5 py-0.2 rounded text-[10px]">
+            {selectedRegIds.length}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setMobileTab('preview')}
+          className={`flex-1 py-2 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+            mobileTab === 'preview'
+              ? 'bg-primary text-white shadow-xs'
+              : 'text-secondary hover:text-on-surface'
+          }`}
+        >
+          <span className="material-symbols-outlined text-[16px]">visibility</span>
+          <span>{isAmharic ? '2. የሕትመት እይታ' : '2. Print Preview'}</span>
+        </button>
+      </div>
+
       {/* Main Content Area */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Left Side: Registration Selection Checklist */}
-        <div className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-2xl p-4 shadow-xs space-y-3">
+        {/* Left Side: Registration Selection Checklist & Order Form */}
+        <div
+          className={`lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-2xl p-3.5 sm:p-4 shadow-xs space-y-3 ${
+            mobileTab === 'config' ? 'block' : 'hidden lg:block'
+          }`}
+        >
           <div className="flex items-center justify-between border-b border-outline-variant pb-2">
             <h3 className="font-bold text-xs text-on-surface flex items-center gap-1.5">
               <span className="material-symbols-outlined text-primary text-[18px]">fact_check</span>
@@ -212,7 +251,8 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
             </button>
           </div>
 
-          <div className="max-h-[520px] overflow-y-auto space-y-2 pr-1">
+          {/* Checklist Items Container - Compact height on mobile */}
+          <div className="max-h-60 sm:max-h-[480px] overflow-y-auto space-y-2 pr-1 scrollbar-thin">
             {filteredApproved.length === 0 ? (
               <div className="p-6 text-center space-y-2">
                 <span className="material-symbols-outlined text-secondary text-[32px]">folder_open</span>
@@ -227,7 +267,7 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
                   <div
                     key={reg.id}
                     onClick={() => toggleSelect(reg.id)}
-                    className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-2 ${
+                    className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-2 min-h-[44px] ${
                       isSelected
                         ? 'bg-blue-50/80 border-blue-400 ring-1 ring-blue-300'
                         : 'bg-surface-container/30 border-outline-variant/60 hover:bg-surface-container'
@@ -266,7 +306,7 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
               <select
                 value={facility}
                 onChange={(e) => setFacility(e.target.value)}
-                className="w-full bg-surface border border-outline-variant rounded-xl p-2 text-xs text-on-surface focus:ring-2 focus:ring-blue-500"
+                className="w-full bg-surface border border-outline-variant rounded-xl p-2.5 sm:p-2 text-xs text-on-surface focus:ring-2 focus:ring-blue-500"
               >
                 <option value="Central Security Printing Facility #1">Central Security Printing Facility #1</option>
                 <option value="Bole Division Municipal Press">Bole Division Municipal Press</option>
@@ -274,7 +314,7 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
               </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
                 <label className="block text-[11px] font-bold text-secondary mb-1">
                   {isAmharic ? 'ቅድሚያ' : 'Priority Level'}
@@ -282,7 +322,7 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as 'standard' | 'express' | 'urgent')}
-                  className="w-full bg-surface border border-outline-variant rounded-xl p-2 text-xs text-on-surface focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-surface border border-outline-variant rounded-xl p-2.5 sm:p-2 text-xs text-on-surface focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="standard">Standard (24h)</option>
                   <option value="express">Express (6h)</option>
@@ -294,7 +334,7 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
                 <label className="block text-[11px] font-bold text-secondary mb-1">
                   {isAmharic ? 'ተመርጠዋል' : 'Total Badges'}
                 </label>
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-2 text-center font-mono font-bold text-blue-900 text-xs">
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-2.5 sm:p-2 text-center font-mono font-bold text-blue-900 text-xs">
                   {selectedRegIds.length} {isAmharic ? 'ካርዶች' : 'Cards'}
                 </div>
               </div>
@@ -309,14 +349,14 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
                 onChange={(e) => setBatchNotes(e.target.value)}
                 rows={2}
                 placeholder={isAmharic ? 'የባች ማስታወሻ...' : 'Batch dispatch notes...'}
-                className="w-full bg-surface border border-outline-variant rounded-xl p-2 text-xs text-on-surface focus:ring-2 focus:ring-blue-500"
+                className="w-full bg-surface border border-outline-variant rounded-xl p-2.5 sm:p-2 text-xs text-on-surface focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             <button
               type="submit"
               disabled={selectedRegIds.length === 0}
-              className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-sm cursor-pointer"
+              className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold py-3 sm:py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-sm cursor-pointer"
             >
               <span className="material-symbols-outlined text-[18px]">local_shipping</span>
               <span>{isAmharic ? 'ትእዛዝ ለማተሚያ ቤት ላክ' : 'Dispatch Order to Printing Press'}</span>
@@ -325,11 +365,15 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
         </div>
 
         {/* Right Side: Live Batch Sheet Preview or Manifest or History */}
-        <div className="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-2xl p-4 sm:p-5 shadow-xs space-y-4 min-h-[580px]">
+        <div
+          className={`lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-2xl p-3.5 sm:p-5 shadow-xs space-y-4 min-h-[480px] sm:min-h-[580px] ${
+            mobileTab === 'preview' ? 'block' : 'hidden lg:block'
+          }`}
+        >
           {/* VIEW MODE A: BATCH CARD SHEET PREVIEW */}
           {viewMode === 'sheet' && (
             <div className="space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-outline-variant pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-outline-variant pb-3">
                 <div>
                   <h3 className="font-extrabold text-sm text-on-surface flex items-center gap-2">
                     <span className="material-symbols-outlined text-blue-600 text-[20px]">badge</span>
@@ -342,16 +386,16 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold px-2 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded-md">
-                    SCALE: 1:1 PHYSICAL ID (85.6mm x 54mm)
+                <div className="flex items-center gap-2 self-start sm:self-auto">
+                  <span className="text-[9px] sm:text-[10px] font-bold px-2 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded-md">
+                    SCALE 1:1 PHYSICAL ID (85.6mm x 54mm)
                   </span>
                 </div>
               </div>
 
               {selectedRegistrations.length === 0 ? (
-                <div className="p-12 text-center space-y-3 bg-surface-container/20 border border-dashed border-outline-variant rounded-2xl">
-                  <span className="material-symbols-outlined text-secondary text-[48px]">grid_view</span>
+                <div className="p-8 sm:p-12 text-center space-y-3 bg-surface-container/20 border border-dashed border-outline-variant rounded-2xl">
+                  <span className="material-symbols-outlined text-secondary text-[40px] sm:text-[48px]">grid_view</span>
                   <p className="text-sm font-bold text-on-surface">
                     {isAmharic ? 'ምንም የተመረጠ የሕትመት እቃ የለም' : 'No Registrations Selected for Batch Preview'}
                   </p>
@@ -362,9 +406,9 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
                   </p>
                 </div>
               ) : (
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {/* Print Sheet Header Simulation */}
-                  <div className="p-3 bg-slate-900 text-slate-100 rounded-xl flex items-center justify-between text-xs font-mono">
+                  <div className="p-3 bg-slate-900 text-slate-100 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5 sm:gap-4 text-[10px] sm:text-xs font-mono">
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                       <span>BATCH JOB ID: ORD-{Math.floor(1000 + Math.random() * 9000)}</span>
@@ -378,7 +422,7 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
                     {selectedRegistrations.map((reg) => (
                       <div
                         key={reg.id}
-                        className="p-3 bg-surface border border-outline-variant rounded-xl shadow-xs space-y-3 relative overflow-hidden"
+                        className="p-2 sm:p-3 bg-surface border border-outline-variant rounded-xl shadow-xs space-y-2 sm:space-y-3 relative overflow-hidden"
                       >
                         {/* Batch Item Tag */}
                         <div className="flex items-center justify-between text-[10px] font-mono border-b border-outline-variant/60 pb-1.5">
@@ -410,12 +454,12 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
               </div>
 
               {selectedRegistrations.length === 0 ? (
-                <div className="p-12 text-center text-xs text-secondary">
+                <div className="p-8 sm:p-12 text-center text-xs text-secondary">
                   {isAmharic ? 'ምንም ማኒፌስት የለም። እባክዎን ከግራ በኩል ይምረጡ።' : 'No items selected for manifest view.'}
                 </div>
               ) : (
                 <div className="overflow-x-auto border border-outline-variant rounded-xl">
-                  <table className="w-full text-left text-xs">
+                  <table className="w-full text-left text-xs min-w-[500px]">
                     <thead className="bg-surface-container text-secondary font-bold uppercase text-[10px] border-b border-outline-variant">
                       <tr>
                         <th className="p-2.5">#</th>
@@ -470,10 +514,10 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
                   {printOrders.map((ord) => (
                     <div
                       key={ord.id}
-                      className="p-3.5 bg-surface-container/30 border border-outline-variant rounded-xl flex flex-wrap items-center justify-between gap-3"
+                      className="p-3 sm:p-3.5 bg-surface-container/30 border border-outline-variant rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                     >
                       <div className="space-y-1">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-bold font-mono text-sm text-primary">{ord.id}</span>
                           <span
                             className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
@@ -500,7 +544,7 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
                       <button
                         type="button"
                         onClick={() => setInspectOrder(ord)}
-                        className="px-3 py-1.5 bg-surface-container hover:bg-surface-container-high text-on-surface font-bold text-xs rounded-lg transition-colors cursor-pointer border border-outline-variant/60 flex items-center gap-1"
+                        className="w-full sm:w-auto px-3 py-2 sm:py-1.5 bg-surface-container hover:bg-surface-container-high text-on-surface font-bold text-xs rounded-lg transition-colors cursor-pointer border border-outline-variant/60 flex items-center justify-center gap-1"
                       >
                         <span className="material-symbols-outlined text-[16px]">visibility</span>
                         <span>{isAmharic ? 'ትእዛዙን እይ' : 'Inspect Order'}</span>
@@ -516,17 +560,17 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
 
       {/* Inspect Dispatched Batch Modal */}
       {inspectOrder && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 sm:p-6 max-w-lg w-full space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-4 sm:p-6 max-w-lg w-full space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-outline-variant pb-3">
-              <h3 className="font-bold text-sm text-on-surface flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-[20px]">inventory</span>
+              <h3 className="font-bold text-xs sm:text-sm text-on-surface flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary text-[18px] sm:text-[20px]">inventory</span>
                 <span>{isAmharic ? 'የሕትመት ትእዛዝ ዝርዝር እይታ' : 'Inspect Batch Print Order Manifest'}</span>
               </h3>
               <button
                 type="button"
                 onClick={() => setInspectOrder(null)}
-                className="text-secondary hover:text-on-surface cursor-pointer"
+                className="text-secondary hover:text-on-surface cursor-pointer p-1"
               >
                 <span className="material-symbols-outlined">close</span>
               </button>
@@ -568,7 +612,7 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
               <button
                 type="button"
                 onClick={() => setInspectOrder(null)}
-                className="bg-primary text-white font-bold py-2 px-5 rounded-xl text-xs cursor-pointer"
+                className="w-full sm:w-auto bg-primary text-white font-bold py-2.5 sm:py-2 px-5 rounded-xl text-xs cursor-pointer text-center"
               >
                 {isAmharic ? 'ዝጋ' : 'Close'}
               </button>
