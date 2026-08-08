@@ -176,10 +176,11 @@ export const HomePage: React.FC<HomePageProps> = ({
             <button
               type="button"
               onClick={onToggleLang}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-lowest border border-outline-variant rounded-xl text-xs font-semibold text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
+              title={isAmharic ? 'Switch to English' : 'ወደ አማርኛ ቀይር'}
+              className="p-2 sm:px-2.5 sm:py-1.5 bg-surface-container-lowest border border-outline-variant rounded-xl flex items-center gap-1 text-xs font-bold text-on-surface hover:bg-surface-container hover:border-primary/40 transition-all cursor-pointer shadow-2xs"
             >
-              <span className="material-symbols-outlined text-[16px] text-outline">language</span>
-              <span>{isAmharic ? 'English' : 'አማርኛ'}</span>
+              <span className="material-symbols-outlined text-[20px] text-primary">translate</span>
+              <span className="text-[10px] font-extrabold text-secondary tracking-tight">{isAmharic ? 'EN' : 'አማ'}</span>
             </button>
 
             {/* Logout Button */}
