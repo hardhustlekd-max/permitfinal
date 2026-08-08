@@ -186,7 +186,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 pb-20 space-y-4">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-2.5 sm:p-3 pb-16 space-y-3">
         
         {/* PAGE 1: UNIVERSAL DASHBOARD OVERVIEW */}
         {activePage === 'dashboard' && (
@@ -336,7 +336,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             </span>
           </button>
 
-          {/* Register Page */}
+          {/* Register / Print Page */}
           <button
             type="button"
             onClick={() => setActivePage('forms')}
@@ -346,9 +346,13 @@ export const HomePage: React.FC<HomePageProps> = ({
                 : 'text-secondary hover:text-on-surface hover:bg-surface-container'
             }`}
           >
-            <span className="material-symbols-outlined text-[20px] sm:text-[22px]">how_to_reg</span>
+            <span className="material-symbols-outlined text-[20px] sm:text-[22px]">
+              {userRole === 'admin' ? 'print' : 'how_to_reg'}
+            </span>
             <span className="text-[10px] sm:text-xs tracking-tight text-center sm:text-left">
-              {isAmharic ? 'ምዝገባ' : 'Register'}
+              {userRole === 'admin'
+                ? (isAmharic ? 'ሕትመት' : 'Print')
+                : (isAmharic ? 'ምዝገባ' : 'Register')}
             </span>
           </button>
 

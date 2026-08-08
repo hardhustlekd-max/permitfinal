@@ -74,15 +74,15 @@ export const PermitStatusSummary: React.FC<PermitStatusSummaryProps> = ({
     <div id="permit-status-summary" className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-3.5 sm:p-4 shadow-xs space-y-3">
       {/* Header Bar */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-outline-variant pb-2.5">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-sky-100 border border-sky-200 flex items-center justify-center text-primary">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-sky-100 border border-sky-200 flex items-center justify-center text-primary shrink-0">
             <span className="material-symbols-outlined text-[20px]">analytics</span>
           </div>
           <div>
             <h3 className="font-bold text-sm text-on-surface">
               {isAmharic ? 'የፈቃዶች አጠቃላይ ሁኔታ' : 'Permit Status Breakdown'}
             </h3>
-            <p className="text-[11px] text-secondary">
+            <p className="text-[11px] text-secondary mt-0.5">
               {isAmharic ? 'የሁሉም ፈቃዶች ሁኔታና ብዛት ማጠቃለያ' : 'Real-time overview of all permit applications'}
             </p>
           </div>
@@ -101,14 +101,14 @@ export const PermitStatusSummary: React.FC<PermitStatusSummaryProps> = ({
           <div
             key={card.key}
             onClick={() => onSelectStatusFilter && onSelectStatusFilter(card.key)}
-            className={`bg-surface-container/30 border border-outline-variant ${card.hoverBorder} rounded-xl p-3 flex flex-col justify-between transition-all cursor-pointer group shadow-2xs`}
+            className={`bg-surface-container/30 border border-outline-variant ${card.hoverBorder} rounded-xl p-3 flex flex-col justify-between transition-all cursor-pointer group shadow-2xs relative overflow-hidden`}
           >
             {/* Top row with icon & count */}
             <div className="flex items-start justify-between gap-2 mb-2">
               <div className={`p-1.5 rounded-lg shrink-0 ${card.iconBg} shadow-xs`}>
                 <span className="material-symbols-outlined text-[18px]">{card.icon}</span>
               </div>
-              <span className="font-mono font-black text-xl sm:text-2xl text-on-surface group-hover:text-primary transition-colors">
+              <span className="font-mono font-black text-xl sm:text-2xl text-on-surface group-hover:text-primary transition-colors block">
                 {card.count}
               </span>
             </div>
@@ -137,3 +137,4 @@ export const PermitStatusSummary: React.FC<PermitStatusSummaryProps> = ({
     </div>
   );
 };
+

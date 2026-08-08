@@ -6,6 +6,7 @@ import {
   Language,
 } from '../types';
 import { QRCodeCard } from './QRCodeCard';
+import { BatchPrintPreviewPage } from './BatchPrintPreviewPage';
 
 interface AdminDashboardProps {
   lang: Language;
@@ -179,7 +180,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       </p>
                       <p className="text-secondary">
                         <span className="font-semibold">{isAmharic ? 'ዓይነት፡' : 'Category:'}</span>{' '}
-                        {reg.vehicleCategory === 'electric' ? 'Electric Motorcycle' : 'Gas (<110cc)'}
+                        {reg.vehicleCategory === 'electric' ? 'Ev' : 'Gasoline'}
                       </p>
                       <p className="text-secondary font-mono text-[11px]">
                         <span className="font-semibold">{isAmharic ? 'ሴሪያል፡' : 'Serial:'}</span> {reg.engineOrSerialNo}
@@ -388,126 +389,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
-      {/* TAB 3: PRINT PRESS BATCH ORDERING */}
+      {/* TAB 3: PRINT PRESS BATCH ORDERING & PREVIEW PAGE */}
       {activeTab === 'print_batch' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Dispatch Approved Items to Print Press */}
-          <div className="lg:col-span-6 bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 shadow-xs space-y-4">
-            <h3 className="font-bold text-base text-on-surface flex items-center justify-between border-b border-outline-variant pb-3">
-              <span className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">add_task</span>
-                <span>{isAmharic ? 'አዲስ የሕትመት ትእዛዝ መፍጠሪያ' : 'Order Batch Print Press'}</span>
-              </span>
-              <span className="text-xs text-secondary font-normal">
-                {selectedRegIds.length} {isAmharic ? 'የተመረጡ' : 'selected'}
-              </span>
-            </h3>
-
-            <p className="text-xs text-secondary">
-              {isAmharic
-                ? 'ለማተሚያ ቤት (Print Press) የሚላኩ የተፀደቁ የባለቤት መታወቂያዎችን እና የሞተር ስቲከሮችን ይምረጡ።'
-                : 'Select approved registrations to order physical ID Cards and Motor Stickers from the Print Press.'}
-            </p>
-
-            <div className="max-h-60 overflow-y-auto divide-y divide-outline-variant border border-outline-variant rounded-xl p-2 bg-surface-container/20">
-              {approvedRegistrations.length === 0 ? (
-                <p className="text-xs text-secondary py-4 text-center">
-                  {isAmharic ? 'ምንም የፀደቀ ምዝገባ የለም' : 'No approved registrations available for print.'}
-                </p>
-              ) : (
-                approvedRegistrations.map((reg) => (
-                  <label
-                    key={reg.id}
-                    className="flex items-center justify-between p-2 hover:bg-surface-container rounded-lg cursor-pointer text-xs"
-                  >
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        checked={selectedRegIds.includes(reg.id)}
-                        onChange={() => toggleSelectRegForPrint(reg.id)}
-                        className="w-4 h-4 rounded text-primary focus:ring-primary"
-                      />
-                      <div>
-                        <p className="font-bold text-on-surface">{reg.fullName}</p>
-                        <p className="text-[10px] text-secondary font-mono">{reg.plateNumber} • {reg.id}</p>
-                      </div>
-                    </div>
-                    <span className="text-[10px] bg-green-100 text-green-800 font-bold px-2 py-0.5 rounded-full">
-                      {reg.status}
-                    </span>
-                  </label>
-                ))
-              )}
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-secondary mb-1">
-                {isAmharic ? 'ለማተሚያ ቤቱ ማስታወሻ/ትእዛዝ' : 'Instructions for Print Press Operator'}
-              </label>
-              <textarea
-                value={batchNotes}
-                onChange={(e) => setBatchNotes(e.target.value)}
-                rows={2}
-                placeholder={isAmharic ? 'ምሳሌ፡ በጥድፊያ ይታተም' : 'e.g. High priority printing batch for Bole Division'}
-                className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl p-2.5 text-xs text-on-surface focus:ring-2 focus:ring-primary focus:outline-none"
-              />
-            </div>
-
-            <button
-              type="button"
-              disabled={selectedRegIds.length === 0}
-              onClick={handleDispatchPrintOrder}
-              className="w-full bg-primary hover:bg-primary-hover text-white py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-sm disabled:opacity-50 cursor-pointer"
-            >
-              <span className="material-symbols-outlined text-[18px]">local_shipping</span>
-              <span>{isAmharic ? 'ትእዛዝ ለማተሚያ ቤት ላክ (Dispatch to Print Press)' : 'Dispatch Order to Print Press'}</span>
-            </button>
-          </div>
-
-          {/* Existing Sent Print Orders Tracker */}
-          <div className="lg:col-span-6 bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 shadow-xs space-y-4">
-            <h3 className="font-bold text-base text-on-surface flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">inventory</span>
-              <span>{isAmharic ? 'የተላኩ የሕትመት ትእዛዞች ሁኔታ' : 'Print Press Batch Status'}</span>
-            </h3>
-
-            <div className="divide-y divide-outline-variant">
-              {printOrders.length === 0 ? (
-                <p className="text-xs text-secondary py-4 text-center">
-                  {isAmharic ? 'የተላከ የሕትመት ትእዛዝ የለም' : 'No active print press batch orders.'}
-                </p>
-              ) : (
-                printOrders.map((ord) => (
-                  <div key={ord.id} className="py-3 space-y-1 text-xs">
-                    <div className="flex justify-between items-center">
-                      <span className="font-bold font-mono text-primary">{ord.id}</span>
-                      <span
-                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                          ord.status === 'completed'
-                            ? 'bg-green-100 text-green-800'
-                            : ord.status === 'in_printing'
-                            ? 'bg-blue-100 text-blue-800 animate-pulse'
-                            : 'bg-amber-100 text-amber-800'
-                        }`}
-                      >
-                        {ord.status === 'completed'
-                          ? 'Delivered'
-                          : ord.status === 'in_printing'
-                          ? 'Printing In Progress'
-                          : 'Pending Acceptance'}
-                      </span>
-                    </div>
-
-                    <p className="text-secondary">{ord.notes}</p>
-                    <p className="text-[10px] text-outline">
-                      {isAmharic ? 'የእቃዎች ብዛት፡' : 'Total Items:'} {ord.totalItems} • {ord.orderDate}
-                    </p>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
+        <BatchPrintPreviewPage
+          lang={lang}
+          registrations={registrations}
+          printOrders={printOrders}
+          onCreatePrintOrder={onCreatePrintOrder}
+        />
       )}
       </div>
 

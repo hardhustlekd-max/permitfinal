@@ -9,6 +9,7 @@ import {
 } from '../types';
 import { QRCodeCard } from './QRCodeCard';
 import { DocumentUploadInput } from './DocumentUploadInput';
+import { BatchPrintPreviewPage } from './BatchPrintPreviewPage';
 
 interface FormsPageProps {
   lang: Language;
@@ -36,7 +37,9 @@ export const FormsPage: React.FC<FormsPageProps> = ({
   const isAmharic = lang === 'am';
 
   // Active form tab: 'registration' | 'officer' | 'print'
-  const [activeFormTab, setActiveFormTab] = useState<'registration' | 'officer' | 'print'>('registration');
+  const [activeFormTab, setActiveFormTab] = useState<'registration' | 'officer' | 'print'>(
+    userRole === 'admin' ? 'print' : 'registration'
+  );
 
   // --- FORM 1: MOTORCYCLE REGISTRATION STATE ---
   const [fullName, setFullName] = useState('');
@@ -216,27 +219,29 @@ export const FormsPage: React.FC<FormsPageProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* Admin Quick Action Bar if Admin */}
-      {userRole === 'admin' && (
-        <div className="bg-surface-container-lowest border border-outline-variant p-3 sm:p-3.5 rounded-2xl shadow-xs flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary">admin_panel_settings</span>
-            <span className="text-xs font-bold text-on-surface">
-              {isAmharic ? 'የአድሚን አስተዳደር ቅጾች' : 'Admin Management Forms'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setActiveFormTab('registration')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeFormTab === 'registration'
-                  ? 'bg-primary text-white shadow-xs'
-                  : 'bg-surface-container text-secondary hover:text-on-surface'
-              }`}
-            >
-              {isAmharic ? 'ምዝገባ' : 'Registration'}
-            </button>
+      {/* Forms Action Bar */}
+      <div className="bg-surface-container-lowest border border-outline-variant p-3 sm:p-3.5 rounded-2xl shadow-xs flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-primary text-[20px]">assignment</span>
+          <span className="text-xs font-bold text-on-surface">
+            {isAmharic ? 'ስርዓት እና ማመልከቻ ቅጾች' : 'Registration & Administrative Forms'}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            onClick={() => setActiveFormTab('registration')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              activeFormTab === 'registration'
+                ? 'bg-primary text-white shadow-xs'
+                : 'bg-surface-container text-secondary hover:text-on-surface'
+            }`}
+          >
+            {isAmharic ? 'ምዝገባ' : 'Registration'}
+          </button>
+
+          {(userRole === 'admin' || userRole === 'officer') && (
             <button
               type="button"
               onClick={() => setActiveFormTab('officer')}
@@ -248,6 +253,9 @@ export const FormsPage: React.FC<FormsPageProps> = ({
             >
               {isAmharic ? 'ተቆጣጣሪ ምደባ' : 'Officer Deployment'}
             </button>
+          )}
+
+          {(userRole === 'admin' || userRole === 'printing_press') && (
             <button
               type="button"
               onClick={() => setActiveFormTab('print')}
@@ -259,9 +267,9 @@ export const FormsPage: React.FC<FormsPageProps> = ({
             >
               {isAmharic ? 'የሕትመት ባች' : 'Batch Print'} ({approvedRegsForPrint.length})
             </button>
-          </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Main Normal Form Body */}
       <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-xs overflow-hidden p-3.5 sm:p-5">
@@ -304,7 +312,7 @@ export const FormsPage: React.FC<FormsPageProps> = ({
                       className="w-4 h-4 text-primary focus:ring-primary accent-primary cursor-pointer"
                     />
                     <span className={`text-xs ${vehicleCategory === 'electric' ? 'font-bold text-on-surface' : 'text-secondary'}`}>
-                      {isAmharic ? 'የኤሌክትሪክ ሞተርሳይክል (EV)' : 'Electric Motorcycle (EV)'}
+                      {isAmharic ? 'ኢቪ (Ev)' : 'Ev'}
                     </span>
                   </label>
 
@@ -318,7 +326,7 @@ export const FormsPage: React.FC<FormsPageProps> = ({
                       className="w-4 h-4 text-primary focus:ring-primary accent-primary cursor-pointer"
                     />
                     <span className={`text-xs ${vehicleCategory === 'gas_under_110cc' || vehicleCategory === 'under_110cc' ? 'font-bold text-on-surface' : 'text-secondary'}`}>
-                      {isAmharic ? 'ከ110cc በታች ቤንዚን' : 'Gasoline (<110cc)'}
+                      {isAmharic ? 'ቤንዚን' : 'Gasoline'}
                     </span>
                   </label>
                 </div>
@@ -644,121 +652,14 @@ export const FormsPage: React.FC<FormsPageProps> = ({
         </div>
       )}
 
-      {/* --- TAB 3: PRINT PRESS BATCH DISPATCH FORM --- */}
+      {/* --- TAB 3: PRINT PRESS BATCH DISPATCH & PREVIEW PAGE --- */}
       {activeFormTab === 'print' && (
-        <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 shadow-xs space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-outline-variant pb-3">
-            <div>
-              <h3 className="font-bold text-base text-on-surface flex items-center gap-2">
-                <span className="material-symbols-outlined text-blue-600">print</span>
-                <span>{isAmharic ? 'ለሕትመት ቤት የባች ትእዛዝ ማዘጋጃ ቅጽ' : 'Batch Print Dispatch Form'}</span>
-              </h3>
-              <p className="text-xs text-secondary mt-0.5">
-                {isAmharic
-                  ? 'የፀደቁ ሞተርሳይክሎችን በመምረጥ ለሕትመት ቤት የባች ትእዛዝ ይላኩ'
-                  : 'Select approved motor vehicle records to queue for physical ID badge & sticker press printing.'}
-              </p>
-            </div>
-
-            {approvedRegsForPrint.length > 0 && (
-              <button
-                type="button"
-                onClick={handleSelectAllForPrint}
-                className="px-3 py-1.5 bg-surface-container hover:bg-surface-container-high text-primary rounded-xl text-xs font-bold transition-colors cursor-pointer"
-              >
-                {selectedRegIds.length === approvedRegsForPrint.length
-                  ? (isAmharic ? 'ሁሉንም ሰርዝ' : 'Deselect All')
-                  : (isAmharic ? 'ሁሉንም መዝግብ' : 'Select All Approved')}
-              </button>
-            )}
-          </div>
-
-          {printSuccess && (
-            <div className="bg-blue-50 border border-blue-200 text-blue-900 p-4 rounded-xl text-xs font-bold flex items-center gap-3">
-              <span className="material-symbols-outlined text-blue-600 text-[24px]">task_alt</span>
-              <div>
-                <p>{isAmharic ? 'የሕትመት ባች ትእዛዝ ተልኳል!' : 'Batch Print Job successfully created & dispatched!'}</p>
-                <p className="text-[11px] font-normal text-blue-800">
-                  {isAmharic ? 'ማተሚያ ቤቱ ትእዛዙን በሲስተሙ ይረከባል።' : 'Sent to Printing Press queue.'}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {approvedRegsForPrint.length === 0 ? (
-            <div className="p-8 text-center border border-dashed border-outline-variant rounded-2xl text-xs text-secondary space-y-2">
-              <span className="material-symbols-outlined text-[36px] text-outline">verified</span>
-              <p className="font-bold text-on-surface">
-                {isAmharic ? 'ምንም ያልታተመ የፀደቀ መዝገብ የለም' : 'No Approved Registrations Awaiting Print'}
-              </p>
-              <p>
-                {isAmharic
-                  ? 'በቅድሚያ አዲስ ምዝገባዎችን ከአድሚን ገጽ ያፅድቁ'
-                  : 'All approved registrations have already been queued or printed.'}
-              </p>
-            </div>
-          ) : (
-            <form onSubmit={handlePrintSubmit} className="space-y-5">
-              <div className="divide-y divide-outline-variant max-h-64 overflow-y-auto border border-outline-variant rounded-xl p-2 bg-surface">
-                {approvedRegsForPrint.map((reg) => (
-                  <label
-                    key={reg.id}
-                    className="p-3 flex items-center justify-between hover:bg-surface-container-lowest rounded-lg cursor-pointer transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        checked={selectedRegIds.includes(reg.id)}
-                        onChange={() => toggleSelectRegForPrint(reg.id)}
-                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
-                      />
-                      <div>
-                        <p className="font-bold text-xs text-on-surface">{reg.fullName}</p>
-                        <p className="text-[11px] text-secondary font-mono">
-                          {reg.plateNumber} • {reg.id} • {reg.vehicleCategory}
-                        </p>
-                      </div>
-                    </div>
-
-                    <span className="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
-                      {isAmharic ? 'የፀደቀ' : 'Approved'}
-                    </span>
-                  </label>
-                ))}
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-secondary mb-1">
-                  {isAmharic ? 'የሕትመት ትእዛዝ ማስታወሻ' : 'Printing Dispatch Notes'}
-                </label>
-                <input
-                  type="text"
-                  value={orderNotes}
-                  onChange={(e) => setOrderNotes(e.target.value)}
-                  placeholder={isAmharic ? 'ምሳሌ፡ አስቸኳይ የቦሌ ክፍለ ከተማ ህትመት' : 'e.g. Priority Batch for Bole Sub-City Dispatch'}
-                  className="w-full bg-surface border border-outline-variant rounded-xl px-3 py-2 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div className="flex justify-between items-center pt-2">
-                <p className="text-xs font-bold text-primary">
-                  {isAmharic
-                    ? `የተመረጡ ተሽከርካሪዎች ብዛት፡ ${selectedRegIds.length}`
-                    : `Selected Vehicles for Printing: ${selectedRegIds.length}`}
-                </p>
-
-                <button
-                  type="submit"
-                  disabled={selectedRegIds.length === 0}
-                  className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold px-6 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-sm transition-all cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-[18px]">print</span>
-                  <span>{isAmharic ? 'የሕትመት ትእዛዝ ላክ' : 'Dispatch Order to Printing Press'}</span>
-                </button>
-              </div>
-            </form>
-          )}
-        </div>
+        <BatchPrintPreviewPage
+          lang={lang}
+          registrations={registrations}
+          printOrders={printOrders}
+          onCreatePrintOrder={onCreatePrintOrder}
+        />
       )}
       {/* Live ID & Sticker Preview Modal */}
       {showPreviewModal && (

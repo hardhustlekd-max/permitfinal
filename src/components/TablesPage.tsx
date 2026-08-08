@@ -280,7 +280,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                           <div>
                             <span className="text-secondary font-semibold block">{isAmharic ? 'ዓይነት (Category):' : 'Category:'}</span>
                             <span className="font-bold text-on-surface">
-                              {reg.vehicleCategory === 'electric' ? 'Electric EV' : 'Gas (<110cc)'}
+                              {reg.vehicleCategory === 'electric' ? 'Ev' : 'Gasoline'}
                             </span>
                           </div>
                           <div>
@@ -370,7 +370,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                       <td className="px-2.5 py-2 font-mono font-bold text-primary">{reg.plateNumber}</td>
                       <td className="px-2.5 py-2">
                         <span className="px-2 py-0.5 rounded bg-surface-container text-[10px] font-bold text-secondary">
-                          {reg.vehicleCategory === 'electric' ? 'Electric EV' : '<110cc Engine'}
+                          {reg.vehicleCategory === 'electric' ? 'Ev' : 'Gasoline'}
                         </span>
                       </td>
                       <td className="px-2.5 py-2 font-mono text-[11px] text-secondary">{reg.engineOrSerialNo}</td>

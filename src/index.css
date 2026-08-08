@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+html {
+  font-size: 103%;
+  zoom: 1.03;
+}
+
 @theme {
   --color-primary: #0088cc;
   --color-primary-hover: #0077b3;

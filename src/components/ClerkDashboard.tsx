@@ -158,7 +158,7 @@ export const ClerkDashboard: React.FC<ClerkDashboardProps> = ({
                     className="w-4 h-4 text-primary focus:ring-primary accent-primary cursor-pointer"
                   />
                   <span className={`text-xs ${vehicleCategory === 'electric' ? 'font-bold text-on-surface' : 'text-secondary'}`}>
-                    {isAmharic ? 'የኤሌክትሪክ ሞተርሳይክል (EV)' : 'Electric Motorcycle (EV)'}
+                    {isAmharic ? 'ኢቪ (Ev)' : 'Ev'}
                   </span>
                 </label>
 
@@ -172,7 +172,7 @@ export const ClerkDashboard: React.FC<ClerkDashboardProps> = ({
                     className="w-4 h-4 text-primary focus:ring-primary accent-primary cursor-pointer"
                   />
                   <span className={`text-xs ${vehicleCategory === 'gas_under_110cc' || vehicleCategory === 'under_110cc' ? 'font-bold text-on-surface' : 'text-secondary'}`}>
-                    {isAmharic ? 'ከ110cc በታች ቤንዚን' : 'Gasoline (<110cc)'}
+                    {isAmharic ? 'ቤንዚን' : 'Gasoline'}
                   </span>
                 </label>
               </div>
