@@ -229,7 +229,11 @@ export const TablesPage: React.FC<TablesPageProps> = ({
 
           {/* Mobile Collapsed Cards View (< md) */}
           <div className="block md:hidden space-y-3">
-            {filteredRegistrations.length === 0 ? (
+            {registrations.length === 0 ? (
+              <div className="p-6 text-center text-secondary text-xs bg-surface-container/30 rounded-xl font-bold">
+                {isAmharic ? 'ምንም መዝገብ አልተገኘም (ባዶ / Empty)' : 'Empty — No vehicle records found.'}
+              </div>
+            ) : filteredRegistrations.length === 0 ? (
               <div className="p-6 text-center text-secondary text-xs bg-surface-container/30 rounded-xl">
                 {isAmharic ? 'ምንም የሚመሳሰል መዝገብ አልተገኘም' : 'No matching vehicle records found.'}
               </div>
@@ -352,7 +356,13 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant">
-                {filteredRegistrations.length === 0 ? (
+                {registrations.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="p-4 text-center text-secondary font-bold">
+                      {isAmharic ? 'ምንም መዝገብ አልተገኘም (ባዶ / Empty)' : 'Empty — No vehicle records stored.'}
+                    </td>
+                  </tr>
+                ) : filteredRegistrations.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="p-4 text-center text-secondary">
                       {isAmharic ? 'ምንም የሚመሳሰል መዝገብ አልተገኘም' : 'No matching vehicle records found.'}
@@ -465,7 +475,11 @@ export const TablesPage: React.FC<TablesPageProps> = ({
 
           {/* Mobile Collapsed Cards View (< md) */}
           <div className="block md:hidden space-y-3">
-            {filteredOfficers.length === 0 ? (
+            {officers.length === 0 ? (
+              <div className="p-6 text-center text-secondary text-xs bg-surface-container/30 rounded-xl font-bold">
+                {isAmharic ? 'ምንም ተቆጣጣሪ አልተገኘም (ባዶ / Empty)' : 'Empty — No officer assignments stored.'}
+              </div>
+            ) : filteredOfficers.length === 0 ? (
               <div className="p-6 text-center text-secondary text-xs bg-surface-container/30 rounded-xl">
                 {isAmharic ? 'ምንም የሚመሳሰል ተቆጣጣሪ አልተገኘም' : 'No matching officer assignments found.'}
               </div>
@@ -543,7 +557,13 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant">
-                {filteredOfficers.length === 0 ? (
+                {officers.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="p-4 text-center text-secondary font-bold">
+                      {isAmharic ? 'ምንም ተቆጣጣሪ አልተገኘም (ባዶ / Empty)' : 'Empty — No officer assignments stored.'}
+                    </td>
+                  </tr>
+                ) : filteredOfficers.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="p-4 text-center text-secondary">
                       {isAmharic ? 'ምንም የሚመሳሰል ተቆጣጣሪ አልተገኘም' : 'No matching officer assignments found.'}
@@ -620,9 +640,13 @@ export const TablesPage: React.FC<TablesPageProps> = ({
 
           {/* Mobile Collapsed Cards View (< md) */}
           <div className="block md:hidden space-y-3">
-            {filteredPrintOrders.length === 0 ? (
+            {printOrders.length === 0 ? (
+              <div className="p-6 text-center text-secondary text-xs bg-surface-container/30 rounded-xl font-bold">
+                {isAmharic ? 'ምንም የሕትመት ትእዛዝ አልተገኘም (ባዶ / Empty)' : 'Empty — No print orders stored.'}
+              </div>
+            ) : filteredPrintOrders.length === 0 ? (
               <div className="p-6 text-center text-secondary text-xs bg-surface-container/30 rounded-xl">
-                {isAmharic ? 'ምንም የሕትመት ትእዛዝ አልተገኘም' : 'No matching print orders found.'}
+                {isAmharic ? 'ምንም የሚመሳሰል የሕትመት ትእዛዝ አልተገኘም' : 'No matching print orders found.'}
               </div>
             ) : (
               filteredPrintOrders.map((order) => {
@@ -709,10 +733,16 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant">
-                {filteredPrintOrders.length === 0 ? (
+                {printOrders.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="p-4 text-center text-secondary font-bold">
+                      {isAmharic ? 'ምንም የሕትመት ትእዛዝ አልተገኘም (ባዶ / Empty)' : 'Empty — No print orders stored.'}
+                    </td>
+                  </tr>
+                ) : filteredPrintOrders.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="p-4 text-center text-secondary">
-                      {isAmharic ? 'ምንም የሕትመት ትእዛዝ አልተገኘም' : 'No matching print orders found.'}
+                      {isAmharic ? 'ምንም የሚመሳሰል የሕትመት ትእዛዝ አልተገኘም' : 'No matching print orders found.'}
                     </td>
                   </tr>
                 ) : (

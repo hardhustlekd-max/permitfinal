@@ -253,11 +253,18 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
 
           {/* Checklist Items Container - Compact height on mobile */}
           <div className="max-h-60 sm:max-h-[480px] overflow-y-auto space-y-2 pr-1 scrollbar-thin">
-            {filteredApproved.length === 0 ? (
+            {approvedRegistrations.length === 0 ? (
+              <div className="p-6 text-center space-y-2">
+                <span className="material-symbols-outlined text-secondary text-[32px]">folder_open</span>
+                <p className="text-xs text-secondary font-bold">
+                  {isAmharic ? 'ምንም ለሕትመት የተፈቀደ ምዝገባ የለም (ባዶ / Empty)' : 'Empty — No approved registrations available.'}
+                </p>
+              </div>
+            ) : filteredApproved.length === 0 ? (
               <div className="p-6 text-center space-y-2">
                 <span className="material-symbols-outlined text-secondary text-[32px]">folder_open</span>
                 <p className="text-xs text-secondary">
-                  {isAmharic ? 'ምንም ለሕትመት የተፈቀደ ምዝገባ አልተገኘም' : 'No approved registrations matching filter.'}
+                  {isAmharic ? 'ምንም የሚመሳሰል የተፈቀደ ምዝገባ አልተገኘም' : 'No approved registrations matching filter.'}
                 </p>
               </div>
             ) : (
@@ -397,7 +404,7 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
                 <div className="p-8 sm:p-12 text-center space-y-3 bg-surface-container/20 border border-dashed border-outline-variant rounded-2xl">
                   <span className="material-symbols-outlined text-secondary text-[40px] sm:text-[48px]">grid_view</span>
                   <p className="text-sm font-bold text-on-surface">
-                    {isAmharic ? 'ምንም የተመረጠ የሕትመት እቃ የለም' : 'No Registrations Selected for Batch Preview'}
+                    {isAmharic ? 'ምንም የተመረጠ የሕትመት እቃ የለም (ባዶ / Empty)' : 'Empty — No Registrations Selected for Batch Preview'}
                   </p>
                   <p className="text-xs text-secondary max-w-md mx-auto">
                     {isAmharic
@@ -454,8 +461,8 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
               </div>
 
               {selectedRegistrations.length === 0 ? (
-                <div className="p-8 sm:p-12 text-center text-xs text-secondary">
-                  {isAmharic ? 'ምንም ማኒፌስት የለም። እባክዎን ከግራ በኩል ይምረጡ።' : 'No items selected for manifest view.'}
+                <div className="p-8 sm:p-12 text-center text-xs text-secondary font-bold">
+                  {isAmharic ? 'ምንም ማኒፌስት የለም (ባዶ / Empty)። እባክዎን ከግራ በኩል ይምረጡ።' : 'Empty — No items selected for manifest view.'}
                 </div>
               ) : (
                 <div className="overflow-x-auto border border-outline-variant rounded-xl">
@@ -506,8 +513,8 @@ export const BatchPrintPreviewPage: React.FC<BatchPrintPreviewPageProps> = ({
               </div>
 
               {printOrders.length === 0 ? (
-                <p className="text-xs text-secondary py-8 text-center">
-                  {isAmharic ? 'ምንም የተላከ የሕትመት ትእዛዝ የለም' : 'No active or completed print batch orders recorded.'}
+                <p className="text-xs text-secondary font-bold py-8 text-center">
+                  {isAmharic ? 'ምንም የተላከ የሕትመት ትእዛዝ የለም (ባዶ / Empty)' : 'Empty — No active or completed print batch orders recorded.'}
                 </p>
               ) : (
                 <div className="space-y-3">

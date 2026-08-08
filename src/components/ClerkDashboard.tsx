@@ -387,8 +387,8 @@ export const ClerkDashboard: React.FC<ClerkDashboardProps> = ({
 
         <div className="divide-y divide-outline-variant overflow-x-auto">
           {registrations.length === 0 ? (
-            <p className="text-xs text-secondary py-4 text-center">
-              {isAmharic ? 'ምንም የተመዘገበ ሞተር የለም' : 'No motor registrations yet.'}
+            <p className="text-xs text-secondary font-bold py-4 text-center">
+              {isAmharic ? 'ምንም የተመዘገበ ሞተር የለም (ባዶ / Empty)' : 'Empty — No motor registrations yet.'}
             </p>
           ) : (
             registrations.map((reg) => (

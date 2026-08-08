@@ -148,7 +148,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 text-center space-y-2">
               <span className="material-symbols-outlined text-green-600 text-[40px]">check_circle</span>
               <h3 className="font-bold text-sm text-on-surface">
-                {isAmharic ? 'ምንም የሚጠበቅ ምዝገባ የለም!' : 'All caught up! No pending registrations.'}
+                {isAmharic ? 'ምንም የሚጠበቅ ምዝገባ የለም (ባዶ / Empty)!' : 'Empty — All caught up! No pending registrations.'}
               </h3>
               <p className="text-xs text-secondary">
                 {isAmharic ? 'በፀሀፊ የቀረቡ ሁሉም ምዝገባዎች ታይተው ፀድቀዋል።' : 'All clerk entries have been processed.'}
@@ -364,26 +364,32 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </h3>
 
             <div className="divide-y divide-outline-variant">
-              {officers.map((off) => (
-                <div key={off.id} className="py-3 flex items-center justify-between gap-4 text-xs">
-                  <div className="space-y-0.5">
-                    <p className="font-bold text-on-surface">{off.officerName}</p>
-                    <p className="text-[11px] text-secondary">
-                      <span className="font-mono text-primary font-bold">{off.badgeId}</span> • {off.subCity} — {off.locationName}
-                    </p>
-                  </div>
+              {officers.length === 0 ? (
+                <p className="text-xs text-secondary font-bold py-6 text-center">
+                  {isAmharic ? 'ምንም የተመደቡ የመስክ ተቆጣጣሪዎች የሉም (ባዶ / Empty)' : 'Empty — No currently assigned officers.'}
+                </p>
+              ) : (
+                officers.map((off) => (
+                  <div key={off.id} className="py-3 flex items-center justify-between gap-4 text-xs">
+                    <div className="space-y-0.5">
+                      <p className="font-bold text-on-surface">{off.officerName}</p>
+                      <p className="text-[11px] text-secondary">
+                        <span className="font-mono text-primary font-bold">{off.badgeId}</span> • {off.subCity} — {off.locationName}
+                      </p>
+                    </div>
 
-                  <div className="text-right space-y-1">
-                    <span className="inline-block px-2 py-0.5 bg-secondary-container text-secondary rounded text-[10px] font-bold uppercase">
-                      {off.shift} shift
-                    </span>
-                    <p className="text-[10px] text-green-700 font-bold flex items-center gap-1 justify-end">
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-ping"></span>
-                      <span>Active</span>
-                    </p>
+                    <div className="text-right space-y-1">
+                      <span className="inline-block px-2 py-0.5 bg-secondary-container text-secondary rounded text-[10px] font-bold uppercase">
+                        {off.shift} shift
+                      </span>
+                      <p className="text-[10px] text-green-700 font-bold flex items-center gap-1 justify-end">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-ping"></span>
+                        <span>Active</span>
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>

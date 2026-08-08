@@ -25,7 +25,7 @@ export const PrintingPressDashboard: React.FC<PrintingPressDashboardProps> = ({
           <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-8 text-center space-y-2">
             <span className="material-symbols-outlined text-outline text-[48px]">print_disabled</span>
             <h3 className="font-bold text-sm text-on-surface">
-              {isAmharic ? 'ምንም የሕትመት ትእዛዝ አልመጣም' : 'No incoming print jobs currently.'}
+              {isAmharic ? 'ምንም የሕትመት ትእዛዝ አልመጣም (ባዶ / Empty)' : 'Empty — No incoming print jobs currently.'}
             </h3>
             <p className="text-xs text-secondary">
               {isAmharic ? 'አድሚኑ አዲስ ትእዛዝ ሲልክ እዚህ ይታያል።' : 'New print batches from Admin will appear here.'}
