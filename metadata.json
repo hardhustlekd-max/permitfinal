@@ -1,0 +1,6 @@
+{
+  "name": "Enforcement Pro",
+  "description": "Command Central SPA for Municipal Division permit management and enforcement.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

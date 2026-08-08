@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0088cc;
+  --color-primary-hover: #0077b3;
+  --color-primary-container: #0088cc;
+  --color-primary-light: #e0f2fe;
+  --color-brand-indigo: #0088cc;
+}
+
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  .printable-id-card,
+  .printable-id-card * {
+    visibility: visible !important;
+  }
+  .printable-id-card {
+    position: absolute !important;
+    left: 50% !important;
+    top: 20px !important;
+    transform: translateX(-50%) !important;
+    width: 580px !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    box-shadow: none !important;
+    background: #e4f2f7 !important;
+    color: #1e293b !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+
+
