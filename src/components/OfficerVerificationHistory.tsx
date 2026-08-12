@@ -29,6 +29,13 @@ export const OfficerVerificationHistory: React.FC<OfficerVerificationHistoryProp
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [selectedLogForDetails, setSelectedLogForDetails] = useState<VerificationLog | null>(null);
 
+  // Collapsible state for mobile
+  const [expandedLogIds, setExpandedLogIds] = useState<Record<string, boolean>>({});
+
+  const toggleLogExpand = (id: string) => {
+    setExpandedLogIds((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -319,96 +326,127 @@ export const OfficerVerificationHistory: React.FC<OfficerVerificationHistoryProp
         ) : (
           <>
             <div className="divide-y divide-outline-variant">
-              {paginatedLogs.map((log) => (
-              <div
-                key={log.id}
-                className="p-4 hover:bg-surface-container/30 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4"
-              >
-                {/* Left: Driver Portrait & Vehicle/Owner summary */}
-                <div className="flex items-start gap-3">
-                  {/* Driver Portrait Photo Badge */}
-                  <div className="relative w-12 h-14 rounded-xl overflow-hidden border border-outline-variant shrink-0 bg-surface-container shadow-2xs">
-                    {log.userPortraitPhoto || log.nationalIdPhoto ? (
-                      <img
-                        src={log.userPortraitPhoto || log.nationalIdPhoto}
-                        alt={log.fullName}
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-secondary bg-surface-container-high">
-                        <span className="material-symbols-outlined text-[24px]">person</span>
+              {paginatedLogs.map((log) => {
+                const isExpanded = !!expandedLogIds[log.id];
+                return (
+                  <div key={log.id} className="p-3 sm:p-4 hover:bg-surface-container/30 transition-colors">
+                    {/* Collapsed Header / Mobile Compact Row */}
+                    <div className="flex items-center justify-between gap-3 cursor-pointer select-none" onClick={() => toggleLogExpand(log.id)}>
+                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                        {/* Driver Portrait Photo Badge */}
+                        <div className="relative w-10 h-11 sm:w-12 sm:h-14 rounded-xl overflow-hidden border border-outline-variant shrink-0 bg-surface-container shadow-2xs">
+                          {log.userPortraitPhoto || log.nationalIdPhoto ? (
+                            <img
+                              src={log.userPortraitPhoto || log.nationalIdPhoto}
+                              alt={log.fullName}
+                              referrerPolicy="no-referrer"
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-secondary bg-surface-container-high">
+                              <span className="material-symbols-outlined text-[20px] sm:text-[24px]">person</span>
+                            </div>
+                          )}
+                          <div className={`absolute -bottom-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center border border-white text-white font-bold shadow-xs ${
+                            log.verificationStatus === 'verified'
+                              ? 'bg-emerald-600'
+                              : log.verificationStatus === 'warning'
+                              ? 'bg-amber-600'
+                              : 'bg-red-600'
+                          }`}>
+                            <span className="material-symbols-outlined text-[10px] sm:text-[12px]">
+                              {log.verificationStatus === 'verified'
+                                ? 'check'
+                                : log.verificationStatus === 'warning'
+                                ? 'priority_high'
+                                : 'close'}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="min-w-0 flex-1 space-y-0.5">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-mono font-extrabold text-xs sm:text-sm text-primary bg-sky-50 dark:bg-sky-950/60 px-1.5 py-0.5 rounded border border-sky-200 dark:border-sky-800 shrink-0">
+                              {log.plateNumber}
+                            </span>
+                            <span className="font-bold text-xs text-on-surface truncate max-w-[140px] sm:max-w-none">{log.fullName}</span>
+                            <span className={`px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold ${
+                              log.vehicleCategory === 'electric' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200'
+                            }`}>
+                              {log.vehicleCategory === 'electric' ? 'EV' : 'Gasoline'}
+                            </span>
+                          </div>
+                          <div className="text-[10px] text-secondary flex items-center gap-2">
+                            <span>{log.scannedAt}</span>
+                            <span>•</span>
+                            <span className="font-bold text-primary">{log.locationName || 'Checkpoint'}</span>
+                          </div>
+                        </div>
                       </div>
-                    )}
-                    <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center border border-white text-white font-bold shadow-xs ${
-                      log.verificationStatus === 'verified'
-                        ? 'bg-emerald-600'
-                        : log.verificationStatus === 'warning'
-                        ? 'bg-amber-600'
-                        : 'bg-red-600'
-                    }`}>
-                      <span className="material-symbols-outlined text-[12px]">
-                        {log.verificationStatus === 'verified'
-                          ? 'check'
-                          : log.verificationStatus === 'warning'
-                          ? 'priority_high'
-                          : 'close'}
-                      </span>
-                    </div>
-                  </div>
 
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-mono font-extrabold text-sm text-primary bg-sky-50 dark:bg-sky-950/60 px-2 py-0.5 rounded border border-sky-200 dark:border-sky-800">
-                        {log.plateNumber}
-                      </span>
-                      <span className="font-bold text-xs text-on-surface">{log.fullName}</span>
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        log.vehicleCategory === 'electric' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200'
-                      }`}>
-                        {log.vehicleCategory === 'electric' ? 'EV' : 'Gasoline'}
-                      </span>
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
-                        log.permitStatus === 'printed' || log.permitStatus === 'approved'
-                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800'
-                          : 'bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800'
-                      }`}>
-                        {log.permitStatus}
-                      </span>
+                      {/* Right Collapsible Toggle Button */}
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
+                          log.permitStatus === 'printed' || log.permitStatus === 'approved'
+                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800'
+                            : 'bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800'
+                        }`}>
+                          {log.permitStatus}
+                        </span>
+                        <button
+                          type="button"
+                          className="w-8 h-8 rounded-full bg-surface-container/60 hover:bg-surface-container flex items-center justify-center text-outline cursor-pointer transition-colors"
+                          title="Toggle Row Details"
+                        >
+                          <span className="material-symbols-outlined text-[20px]">
+                            {isExpanded ? 'expand_less' : 'expand_more'}
+                          </span>
+                        </button>
+                      </div>
                     </div>
 
-                    <p className="text-xs text-secondary">
-                      <span className="font-medium">{isAmharic ? 'ማስታወሻ፡' : 'Officer Notes:'}</span> {log.officerNotes}
-                    </p>
+                    {/* Expandable Details Body */}
+                    <div className={`${isExpanded ? 'block' : 'hidden md:block'} mt-3 pt-3 border-t border-outline-variant/50 space-y-2`}>
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+                        <div className="space-y-1">
+                          <p className="text-xs text-secondary">
+                            <span className="font-semibold text-on-surface">{isAmharic ? 'ማስታወሻ፡' : 'Officer Notes:'}</span> {log.officerNotes || 'No notes attached.'}
+                          </p>
+                          <div className="flex items-center gap-3 text-[11px] text-outline font-mono flex-wrap">
+                            <span>{isAmharic ? 'ስልክ፡' : 'Phone:'} {log.phone}</span>
+                            <span>•</span>
+                            <span>{isAmharic ? 'ሴሪያል፡' : 'Serial:'} {log.engineOrSerialNo}</span>
+                            <span>•</span>
+                            <span>{isAmharic ? 'ባጅ፡' : 'Officer Badge:'} {log.officerBadgeId || 'OFF-8842'}</span>
+                          </div>
+                        </div>
 
-                    <div className="flex items-center gap-3 text-[11px] text-outline font-mono">
-                      <span>{isAmharic ? 'ስልክ፡' : 'Phone:'} {log.phone}</span>
-                      <span>•</span>
-                      <span>{isAmharic ? 'ሴሪያል፡' : 'Serial:'} {log.engineOrSerialNo}</span>
-                      <span>•</span>
-                      <span>{log.scannedAt}</span>
+                        <div className="flex items-center justify-between md:justify-end gap-3 shrink-0 pt-1 md:pt-0">
+                          <span className={`sm:hidden px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
+                            log.permitStatus === 'printed' || log.permitStatus === 'approved'
+                              ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800'
+                              : 'bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800'
+                          }`}>
+                            {log.permitStatus}
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedLogForDetails(log);
+                            }}
+                            className="bg-primary hover:bg-primary-hover text-white font-bold text-xs px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                          >
+                            <span className="material-symbols-outlined text-[16px]">visibility</span>
+                            <span>{isAmharic ? 'ዝርዝር መረጃ' : 'View Scanned Vehicle'}</span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                {/* Right: Badge & Details Action */}
-                <div className="flex items-center justify-between md:justify-end gap-3 shrink-0 border-t md:border-t-0 pt-2 md:pt-0 border-outline-variant">
-                  <div className="text-left md:text-right text-[11px] text-secondary">
-                    <p className="font-bold text-on-surface">{log.locationName || 'Field Checkpoint'}</p>
-                    <p className="font-mono text-primary text-[10px]">Officer: {log.officerBadgeId || 'OFF-8842'}</p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setSelectedLogForDetails(log)}
-                    className="bg-surface-container hover:bg-surface-container-high text-on-surface font-bold text-xs px-3 py-2 rounded-xl border border-outline-variant flex items-center gap-1.5 transition-all cursor-pointer"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">visibility</span>
-                    <span>{isAmharic ? 'ዝርዝር መረጃ' : 'View Scanned Vehicle'}</span>
-                  </button>
-                </div>
-              </div>
-            ))}
+                );
+              })}
             </div>
 
             {/* Pagination Controls Bar */}

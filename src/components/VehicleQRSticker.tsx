@@ -17,10 +17,9 @@ export const VehicleQRSticker: React.FC<VehicleQRStickerProps> = ({
 }) => {
   const isAmharic = lang === 'am';
 
-  const regId = registration.id || 'S523055501';
-  // Formatted permit serial number (e.g., S523055501 format or plate/regId)
-  const serialNo = registration.id ? (registration.id.startsWith('S') ? registration.id : `S5230${registration.id.replace(/\D/g, '').slice(-5) || '55501'}`) : 'S523055501';
-  const qrVal = registration.qrCodeData || `https://enforcement.gov.et/verify/${registration.id || 'S523055501'}`;
+  const regId = registration.id || 'AA-2026-98414';
+  const userRegNo = registration.id || registration.plateNumber || 'AA-2026-98414';
+  const qrVal = registration.qrCodeData || `https://enforcement.gov.et/verify/${regId}`;
 
   // Format valid until date e.g. "30 JUN 2026" or derived from registration
   const expiryDateFormatted = '30 JUN 2026';
@@ -71,7 +70,7 @@ export const VehicleQRSticker: React.FC<VehicleQRStickerProps> = ({
                 {isAmharic ? 'የደህንነት QR ኮድ ተለጣፊ' : 'Official Security QR Sticker'}
               </h3>
               <p className="text-[11px] font-mono text-secondary font-medium">
-                {isAmharic ? 'ተከታታይ ቁጥር፡' : 'Serial:'} <span className="text-primary font-bold">{serialNo}</span>
+                {isAmharic ? 'ተከታታይ ቁጥር፡' : 'Reg No:'} <span className="text-primary font-bold">{userRegNo}</span>
               </p>
             </div>
           </div>
@@ -116,17 +115,11 @@ export const VehicleQRSticker: React.FC<VehicleQRStickerProps> = ({
 
                 {/* Header System Title Text Block */}
                 <div className="flex-1 text-center font-sans leading-none text-[#000000]">
-                  <div className="text-[13px] font-extrabold tracking-tight mb-0.5 font-sans">
-                    {isAmharic ? 'ጊዚያዊ የፕሮጀክት አስተዳደር ሥርዓት' : 'Temporary Project Management System'}
+                  <div className="text-[14px] font-black tracking-tight mb-1 font-sans">
+                    Temporary Manegment system
                   </div>
-                  <div className="text-[10px] font-bold tracking-tight text-black uppercase">
-                    {isAmharic ? 'ኦፊሴላዊ የሞተርሳይክል ፈቃድ እና መታወቂያ' : 'OFFICIAL MOTORCYCLE REGISTRATION'}
-                  </div>
-                  <div className="text-[15px] font-black tracking-tight text-black uppercase my-0.5 font-sans">
-                    {isAmharic ? 'የትራንስፖርት ቢሮ' : 'TRANSPORT BUREAU'}
-                  </div>
-                  <div className="text-[11px] font-bold tracking-tight text-black">
-                    {isAmharic ? 'የደህንነት QR ኮድ ተለጣፊ' : 'SECURITY PERMIT STICKER'}
+                  <div className="text-[12px] font-extrabold tracking-tight text-black uppercase">
+                    Movement Permit Sticker
                   </div>
                 </div>
               </div>
@@ -151,9 +144,9 @@ export const VehicleQRSticker: React.FC<VehicleQRStickerProps> = ({
                   VALID UNTIL: {expiryDateFormatted}
                 </div>
 
-                {/* Serial Number Display */}
+                {/* Registration Number Display */}
                 <div className="text-[26px] font-black tracking-wider text-slate-950 font-mono leading-none mt-1">
-                  {serialNo}
+                  {userRegNo}
                 </div>
 
                 {/* Bottom Corner Red Security Triangles */}

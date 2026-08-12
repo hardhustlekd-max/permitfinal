@@ -448,42 +448,39 @@ export const SharedScannerModal: React.FC<SharedScannerModalProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Put uploaded image immediately in camera view and trigger scanning animation
-    isProcessingRef.current = true;
+    // Synchronously set object URL for instant 0ms preview & immediate scanning animation
+    const instantPreviewUrl = URL.createObjectURL(file);
+    setUploadedImageSrc(instantPreviewUrl);
+    setCapturedFrameSrc(null);
     setIsScanning(true);
     setScannedRegResult(null);
     setIsProcessingScan(true);
+    isProcessingRef.current = true;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const imgDataUrl = event.target?.result as string;
-      setUploadedImageSrc(imgDataUrl);
-
-      const img = new Image();
-      img.onload = async () => {
-        const foundData = await decodeQRFromImage(img);
-        
-        // Brief delay so the user sees scanning animation over uploaded image in camera view
-        setTimeout(() => {
-          isProcessingRef.current = false;
-          if (foundData) {
-            processQRData(foundData, imgDataUrl);
-          } else {
-            setIsProcessingScan(false);
-            playScanFeedback(false);
-            setScanFlash('not_found');
-            setTimeout(() => {
-              setScannedRegResult('not_found');
-              setIsScanning(false);
-              setScanFlash(null);
-              isProcessingRef.current = false;
-            }, 450);
-          }
-        }, 700);
-      };
-      img.src = imgDataUrl;
+    const img = new Image();
+    img.onload = async () => {
+      const foundData = await decodeQRFromImage(img);
+      
+      // Delay so the user sees the active scanning animation over uploaded image in camera view
+      setTimeout(() => {
+        isProcessingRef.current = false;
+        if (foundData) {
+          processQRData(foundData, instantPreviewUrl);
+        } else {
+          setIsProcessingScan(false);
+          playScanFeedback(false);
+          setScanFlash('not_found');
+          setTimeout(() => {
+            setScannedRegResult('not_found');
+            setIsScanning(false);
+            setScanFlash(null);
+            isProcessingRef.current = false;
+          }, 450);
+        }
+      }, 700);
     };
-    reader.readAsDataURL(file);
+    img.src = instantPreviewUrl;
+
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
