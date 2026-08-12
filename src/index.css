@@ -1,0 +1,558 @@
+@import "tailwindcss";
+
+html {
+  font-size: 16px; /* Base body size */
+}
+
+:root, html.light {
+  --color-primary: #000000;
+  --color-primary-hover: #333333;
+  --color-primary-container: #f5f5f5;
+  --color-primary-light: #e5e5e5;
+  --color-secondary-container: #f0f0f0;
+  --color-surface: #ffffff;
+  --color-on-surface: #111111;
+  --color-on-surface-variant: #666666;
+  --color-surface-container: #fafafa;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f9f9f9;
+  --color-surface-container-high: #f4f4f4;
+  --color-surface-container-highest: #eeeeee;
+  --color-surface-bright: #ffffff;
+  --color-surface-dim: #e5e5e5;
+  --color-surface-variant: #eeeeee;
+  --color-secondary: #666666;
+  --color-outline: #d4d4d4;
+  --color-outline-variant: #e5e5e5;
+  --color-brand-indigo: #000000;
+  color-scheme: light;
+}
+
+html.dark {
+  --color-primary: #ffffff;
+  --color-primary-hover: #e5e5e5;
+  --color-primary-container: #111111;
+  --color-primary-light: #222222;
+  --color-secondary-container: #222222;
+  --color-surface: #000000;
+  --color-on-surface: #ededed;
+  --color-on-surface-variant: #a3a3a3;
+  --color-surface-container: #0a0a0a;
+  --color-surface-container-lowest: #000000;
+  --color-surface-container-low: #050505;
+  --color-surface-container-high: #111111;
+  --color-surface-container-highest: #171717;
+  --color-surface-bright: #111111;
+  --color-surface-dim: #000000;
+  --color-surface-variant: #171717;
+  --color-secondary: #a3a3a3;
+  --color-outline: #404040;
+  --color-outline-variant: #262626;
+  --color-brand-indigo: #ffffff;
+  color-scheme: dark;
+}
+
+@theme {
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-primary-container: var(--color-primary-container);
+  --color-primary-light: var(--color-primary-light);
+  --color-secondary-container: var(--color-secondary-container);
+  --color-surface: var(--color-surface);
+  --color-on-surface: var(--color-on-surface);
+  --color-on-surface-variant: var(--color-on-surface-variant);
+  --color-surface-container: var(--color-surface-container);
+  --color-surface-container-lowest: var(--color-surface-container-lowest);
+  --color-surface-container-low: var(--color-surface-container-low);
+  --color-surface-container-high: var(--color-surface-container-high);
+  --color-surface-container-highest: var(--color-surface-container-highest);
+  --color-surface-bright: var(--color-surface-bright);
+  --color-surface-dim: var(--color-surface-dim);
+  --color-surface-variant: var(--color-surface-variant);
+  --color-secondary: var(--color-secondary);
+  --color-outline: var(--color-outline);
+  --color-outline-variant: var(--color-outline-variant);
+  --color-brand-indigo: var(--color-brand-indigo);
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Global Dark Mode Comprehensive Overrides */
+html.dark,
+.dark {
+  background-color: #0b0f19 !important;
+  color: #f8fafc !important;
+  color-scheme: dark;
+}
+
+html.dark body,
+.dark body {
+  background-color: #0b0f19 !important;
+  color: #f8fafc !important;
+}
+
+/* Background overrides in dark mode (catching opacity modifiers like /95, /90, /80) */
+html.dark [class*="bg-surface-container-lowest"],
+.dark [class*="bg-surface-container-lowest"],
+html.dark [class*="bg-white"],
+.dark [class*="bg-white"] {
+  background-color: #0f172a !important;
+}
+
+html.dark [class*="bg-surface-container"],
+.dark [class*="bg-surface-container"],
+html.dark [class*="bg-slate-50"],
+.dark [class*="bg-slate-50"],
+html.dark [class*="bg-slate-100"],
+.dark [class*="bg-slate-100"],
+html.dark [class*="bg-gray-50"],
+.dark [class*="bg-gray-50"],
+html.dark [class*="bg-gray-100"],
+.dark [class*="bg-gray-100"] {
+  background-color: #182234 !important;
+}
+
+html.dark [class*="bg-surface-container-high"],
+.dark [class*="bg-surface-container-high"],
+html.dark [class*="bg-surface-container-highest"],
+.dark [class*="bg-surface-container-highest"],
+html.dark [class*="bg-slate-200"],
+.dark [class*="bg-slate-200"] {
+  background-color: #1e293b !important;
+}
+
+html.dark [class*="bg-surface"],
+.dark [class*="bg-surface"] {
+  background-color: #0b0f19 !important;
+}
+
+/* Navigation & Header Overrides for Dark Mode */
+html.dark header,
+.dark header,
+html.dark nav,
+.dark nav,
+html.dark aside,
+.dark aside {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
+}
+
+/* Card and Container borders in dark mode */
+html.dark [class*="border-outline-variant"],
+.dark [class*="border-outline-variant"],
+html.dark [class*="border-slate-100"],
+.dark [class*="border-slate-100"],
+html.dark [class*="border-slate-200"],
+.dark [class*="border-slate-200"],
+html.dark [class*="border-slate-300"],
+.dark [class*="border-slate-300"],
+html.dark [class*="border-gray-200"],
+.dark [class*="border-gray-200"],
+html.dark [class*="border-gray-300"],
+.dark [class*="border-gray-300"] {
+  border-color: #1e293b !important;
+}
+
+/* Text color overrides in dark mode */
+html.dark [class*="text-on-surface"],
+.dark [class*="text-on-surface"],
+html.dark [class*="text-slate-900"],
+.dark [class*="text-slate-900"],
+html.dark [class*="text-slate-800"],
+.dark [class*="text-slate-800"],
+html.dark [class*="text-slate-700"],
+.dark [class*="text-slate-700"],
+html.dark [class*="text-slate-950"],
+.dark [class*="text-slate-950"],
+html.dark [class*="text-gray-900"],
+.dark [class*="text-gray-900"],
+html.dark [class*="text-gray-800"],
+.dark [class*="text-gray-800"],
+html.dark [class*="text-gray-700"],
+.dark [class*="text-gray-700"] {
+  color: #f8fafc !important;
+}
+
+html.dark [class*="text-secondary"],
+.dark [class*="text-secondary"],
+html.dark [class*="text-slate-600"],
+.dark [class*="text-slate-600"],
+html.dark [class*="text-slate-500"],
+.dark [class*="text-slate-500"],
+html.dark [class*="text-gray-600"],
+.dark [class*="text-gray-600"],
+html.dark [class*="text-gray-500"],
+.dark [class*="text-gray-500"] {
+  color: #94a3b8 !important;
+}
+
+/* Input, Select, Textarea in dark mode */
+html.dark input[type="text"],
+.dark input[type="text"],
+html.dark input[type="number"],
+.dark input[type="number"],
+html.dark input[type="date"],
+.dark input[type="date"],
+html.dark input[type="search"],
+.dark input[type="search"],
+html.dark input[type="password"],
+.dark input[type="password"],
+html.dark select,
+.dark select,
+html.dark textarea,
+.dark textarea {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+html.dark input::placeholder,
+.dark input::placeholder,
+html.dark textarea::placeholder,
+.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* Light tint boxes override in dark mode */
+html.dark [class*="bg-sky-50"],
+.dark [class*="bg-sky-50"],
+html.dark [class*="bg-blue-50"],
+.dark [class*="bg-blue-50"],
+html.dark [class*="bg-sky-100"],
+.dark [class*="bg-sky-100"] {
+  background-color: rgba(14, 116, 144, 0.25) !important;
+  border-color: rgba(56, 189, 248, 0.3) !important;
+}
+
+html.dark [class*="text-sky-950"],
+.dark [class*="text-sky-950"],
+html.dark [class*="text-sky-900"],
+.dark [class*="text-sky-900"],
+html.dark [class*="text-blue-900"],
+.dark [class*="text-blue-900"] {
+  color: #7dd3fc !important;
+}
+
+html.dark [class*="bg-emerald-50"],
+.dark [class*="bg-emerald-50"],
+html.dark [class*="bg-green-50"],
+.dark [class*="bg-green-50"] {
+  background-color: rgba(6, 78, 59, 0.3) !important;
+  border-color: rgba(52, 211, 153, 0.3) !important;
+}
+
+html.dark [class*="text-emerald-900"],
+.dark [class*="text-emerald-900"],
+html.dark [class*="text-emerald-950"],
+.dark [class*="text-emerald-950"],
+html.dark [class*="text-green-900"],
+.dark [class*="text-green-900"] {
+  color: #6ee7b7 !important;
+}
+
+html.dark [class*="bg-amber-50"],
+.dark [class*="bg-amber-50"],
+html.dark [class*="bg-yellow-50"],
+.dark [class*="bg-yellow-50"] {
+  background-color: rgba(120, 53, 15, 0.3) !important;
+  border-color: rgba(251, 191, 36, 0.3) !important;
+}
+
+html.dark [class*="text-amber-900"],
+.dark [class*="text-amber-900"],
+html.dark [class*="text-amber-950"],
+.dark [class*="text-amber-950"] {
+  color: #fcd34d !important;
+}
+
+html.dark [class*="bg-rose-50"],
+.dark [class*="bg-rose-50"],
+html.dark [class*="bg-red-50"],
+.dark [class*="bg-red-50"] {
+  background-color: rgba(136, 19, 55, 0.3) !important;
+  border-color: rgba(248, 113, 113, 0.3) !important;
+}
+
+html.dark [class*="text-rose-900"],
+.dark [class*="text-rose-900"],
+html.dark [class*="text-rose-950"],
+.dark [class*="text-rose-950"],
+html.dark [class*="text-red-900"],
+.dark [class*="text-red-900"] {
+  color: #fca5a5 !important;
+}
+
+html.dark [class*="bg-purple-50"],
+.dark [class*="bg-purple-50"],
+html.dark [class*="bg-indigo-50"],
+.dark [class*="bg-indigo-50"] {
+  background-color: rgba(88, 28, 135, 0.3) !important;
+  border-color: rgba(192, 132, 252, 0.3) !important;
+}
+
+html.dark [class*="text-purple-900"],
+.dark [class*="text-purple-900"],
+html.dark [class*="text-indigo-900"],
+.dark [class*="text-indigo-900"] {
+  color: #d8b4fe !important;
+}
+
+/* Modals & Dialog overlays */
+html.dark [class*="bg-black/50"],
+.dark [class*="bg-black/50"],
+html.dark [class*="bg-slate-900/60"],
+.dark [class*="bg-slate-900/60"] {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Tables in Dark Mode */
+html.dark tr:hover,
+.dark tr:hover {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+}
+
+html.dark th,
+.dark th {
+  background-color: #141d2d !important;
+  color: #cbd5e1 !important;
+  border-color: #1e293b !important;
+}
+
+html.dark td,
+.dark td {
+  border-color: #1e293b !important;
+}
+
+/* Ensure printable ID cards and A4 documents retain clean light appearance for official scanning */
+html.dark .printable-id-card,
+.dark .printable-id-card {
+  background-color: #e4f2f7 !important;
+  color: #1e293b !important;
+}
+
+html.dark .printable-a4-document,
+.dark .printable-a4-document,
+html.dark .printable-a4-document *,
+.dark .printable-a4-document * {
+  color: #0f172a !important;
+}
+
+html.dark .printable-a4-document,
+.dark .printable-a4-document {
+  background-color: #ffffff !important;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  html, body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Reset all modal backdrops, dialog wrappers, and outer scrollable overlays during print */
+  body[data-print-target] .fixed,
+  body[data-print-target] .absolute,
+  body[data-print-target] .relative,
+  body[data-print-target] [class*="bg-black"],
+  body[data-print-target] [class*="bg-slate-950"],
+  body[data-print-target] [class*="backdrop-blur"] {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    overflow: visible !important;
+    flex: none !important;
+  }
+
+  /* Hide everything by default when print target is active */
+  body[data-print-target] * {
+    visibility: hidden !important;
+  }
+
+  /* 1) Sticker Print Target */
+  body[data-print-target="sticker"] .printable-sticker,
+  body[data-print-target="sticker"] .printable-sticker * {
+    visibility: visible !important;
+  }
+
+  body[data-print-target="sticker"] .printable-sticker {
+    position: fixed !important;
+    top: 15mm !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 380px !important;
+    height: 380px !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: 5px solid #133072 !important;
+    background: #e5e7eb !important;
+    color: #0f172a !important;
+    z-index: 999999 !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 2) ID Card Print Target */
+  body[data-print-target="id-card"] .printable-id-card,
+  body[data-print-target="id-card"] .printable-id-card * {
+    visibility: visible !important;
+  }
+
+  body[data-print-target="id-card"] .printable-id-card {
+    position: fixed !important;
+    top: 15mm !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 580px !important;
+    max-width: 95% !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: 1px solid #38bdf8 !important;
+    background: #e4f2f7 !important;
+    color: #1e293b !important;
+    z-index: 999999 !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 3) A4 Document Print Target */
+  body[data-print-target="a4"] .printable-a4-document,
+  body[data-print-target="a4"] .printable-a4-document * {
+    visibility: visible !important;
+  }
+
+  body[data-print-target="a4"] .printable-a4-document {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 210mm !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    padding: 10mm 12mm !important;
+    box-sizing: border-box !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+    border: none !important;
+    z-index: 999999 !important;
+    overflow: visible !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 4) Batch Sheet Print Target */
+  body[data-print-target="batch-sheet"] .printable-batch-sheet,
+  body[data-print-target="batch-sheet"] .printable-batch-sheet * {
+    visibility: visible !important;
+  }
+
+  body[data-print-target="batch-sheet"] .printable-batch-sheet {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    padding: 10mm !important;
+    box-sizing: border-box !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    display: block !important;
+    z-index: 999999 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body[data-print-target="batch-sheet"] .printable-id-card {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto 10px auto !important;
+    box-shadow: none !important;
+    border: 1px solid #38bdf8 !important;
+    background: #e4f2f7 !important;
+    color: #1e293b !important;
+    z-index: auto !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Default print fallback if triggered globally */
+  body:not([data-print-target]) .printable-a4-document,
+  body:not([data-print-target]) .printable-a4-document *,
+  body:not([data-print-target]) .printable-id-card,
+  body:not([data-print-target]) .printable-id-card *,
+  body:not([data-print-target]) .printable-sticker,
+  body:not([data-print-target]) .printable-sticker * {
+    visibility: visible !important;
+  }
+}
+
+/* Scanner Beam Animation */
+@keyframes scanBeam {
+  0% {
+    top: -15%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+.animate-scan-beam {
+  animation: scanBeam 2.4s ease-in-out infinite;
+}
+
+
+
+
