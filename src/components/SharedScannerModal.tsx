@@ -33,6 +33,9 @@ export const SharedScannerModal: React.FC<SharedScannerModalProps> = ({
   const [scanFlash, setScanFlash] = useState<'success' | 'not_found' | null>(null);
   const [verificationNotes, setVerificationNotes] = useState('');
   const [currentLog, setCurrentLog] = useState<VerificationLog | null>(null);
+  const [uploadedImageSrc, setUploadedImageSrc] = useState<string | null>(null);
+  const [capturedFrameSrc, setCapturedFrameSrc] = useState<string | null>(null);
+  const [isProcessingScan, setIsProcessingScan] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const [zoomedImage, setZoomedImage] = useState<{ url: string; title: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -109,6 +112,9 @@ export const SharedScannerModal: React.FC<SharedScannerModalProps> = ({
       setScannedRegResult(null);
       setCurrentLog(null);
       setVerificationNotes('');
+      setUploadedImageSrc(null);
+      setCapturedFrameSrc(null);
+      setIsProcessingScan(false);
     }
   }, [isOpen]);
 
@@ -265,9 +271,42 @@ export const SharedScannerModal: React.FC<SharedScannerModalProps> = ({
 
   if (!isOpen) return null;
 
-  const processQRData = (qrData: string) => {
+  // Capture snapshot from video element
+  const captureCameraFrame = (): string | null => {
+    if (!videoRef.current || videoRef.current.readyState < 2) return null;
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = videoRef.current.videoWidth || 640;
+      canvas.height = videoRef.current.videoHeight || 480;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+        return canvas.toDataURL('image/jpeg', 0.85);
+      }
+    } catch (e) {
+      console.warn('Failed to capture video frame snapshot:', e);
+    }
+    return null;
+  };
+
+  const processQRData = (qrData: string, imageOverride?: string) => {
     const cleanData = qrData.trim();
     if (!cleanData) return;
+    if (isProcessingRef.current) return;
+    isProcessingRef.current = true;
+
+    // Show active scanning processing animation
+    setIsProcessingScan(true);
+
+    if (imageOverride) {
+      setUploadedImageSrc(imageOverride);
+    } else {
+      const frame = captureCameraFrame();
+      if (frame) {
+        setCapturedFrameSrc(frame);
+      }
+    }
+
     const cleanLower = cleanData.toLowerCase();
 
     // Flexible matching across all registration fields
@@ -302,29 +341,30 @@ export const SharedScannerModal: React.FC<SharedScannerModalProps> = ({
       });
     }
 
-    if (isProcessingRef.current) return;
-    isProcessingRef.current = true;
-
-    if (match) {
-      playScanFeedback(true);
-      setScanFlash('success');
-      autoSaveLog(match);
-      setTimeout(() => {
-        setScannedRegResult(match);
-        setIsScanning(false);
-        setScanFlash(null);
-        isProcessingRef.current = false;
-      }, 450);
-    } else {
-      playScanFeedback(false);
-      setScanFlash('not_found');
-      setTimeout(() => {
-        setScannedRegResult('not_found');
-        setIsScanning(false);
-        setScanFlash(null);
-        isProcessingRef.current = false;
-      }, 450);
-    }
+    // Scanning delay (850ms) so scanning laser beam animation plays over captured camera/image frame
+    setTimeout(() => {
+      setIsProcessingScan(false);
+      if (match) {
+        playScanFeedback(true);
+        setScanFlash('success');
+        autoSaveLog(match);
+        setTimeout(() => {
+          setScannedRegResult(match);
+          setIsScanning(false);
+          setScanFlash(null);
+          isProcessingRef.current = false;
+        }, 450);
+      } else {
+        playScanFeedback(false);
+        setScanFlash('not_found');
+        setTimeout(() => {
+          setScannedRegResult('not_found');
+          setIsScanning(false);
+          setScanFlash(null);
+          isProcessingRef.current = false;
+        }, 450);
+      }
+    }, 850);
   };
 
   const handleScanResult = (result: any) => {
@@ -408,28 +448,40 @@ export const SharedScannerModal: React.FC<SharedScannerModalProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Reset processing flag so uploaded image scanning is never ignored
-    isProcessingRef.current = false;
+    // Put uploaded image immediately in camera view and trigger scanning animation
+    isProcessingRef.current = true;
+    setIsScanning(true);
+    setScannedRegResult(null);
+    setIsProcessingScan(true);
 
     const reader = new FileReader();
     reader.onload = (event) => {
+      const imgDataUrl = event.target?.result as string;
+      setUploadedImageSrc(imgDataUrl);
+
       const img = new Image();
       img.onload = async () => {
         const foundData = await decodeQRFromImage(img);
-        if (foundData) {
-          processQRData(foundData);
-        } else {
-          playScanFeedback(false);
-          setScanFlash('not_found');
-          setTimeout(() => {
-            setScannedRegResult('not_found');
-            setIsScanning(false);
-            setScanFlash(null);
-            isProcessingRef.current = false;
-          }, 450);
-        }
+        
+        // Brief delay so the user sees scanning animation over uploaded image in camera view
+        setTimeout(() => {
+          isProcessingRef.current = false;
+          if (foundData) {
+            processQRData(foundData, imgDataUrl);
+          } else {
+            setIsProcessingScan(false);
+            playScanFeedback(false);
+            setScanFlash('not_found');
+            setTimeout(() => {
+              setScannedRegResult('not_found');
+              setIsScanning(false);
+              setScanFlash(null);
+              isProcessingRef.current = false;
+            }, 450);
+          }
+        }, 700);
       };
-      img.src = event.target?.result as string;
+      img.src = imgDataUrl;
     };
     reader.readAsDataURL(file);
     if (fileInputRef.current) {
@@ -440,6 +492,9 @@ export const SharedScannerModal: React.FC<SharedScannerModalProps> = ({
   const handleStartCameraScan = () => {
     setCameraError('');
     setIsScanning(true);
+    setUploadedImageSrc(null);
+    setCapturedFrameSrc(null);
+    setIsProcessingScan(false);
     setScannedRegResult(null);
   };
 
@@ -450,6 +505,9 @@ export const SharedScannerModal: React.FC<SharedScannerModalProps> = ({
     setVerificationNotes('');
     setShowDetail(false);
     setZoomedImage(null);
+    setUploadedImageSrc(null);
+    setCapturedFrameSrc(null);
+    setIsProcessingScan(false);
     if (searchMode === 'camera') {
       handleStartCameraScan();
     }
@@ -492,16 +550,42 @@ export const SharedScannerModal: React.FC<SharedScannerModalProps> = ({
           <div className="relative bg-slate-950 rounded-3xl w-full h-[380px] sm:h-[440px] overflow-hidden flex flex-col items-center justify-center shadow-inner border border-slate-800">
             {isScanning ? (
               <div className="w-full h-full relative flex items-center justify-center bg-black overflow-hidden">
-                <video 
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className="w-full h-full object-cover"
-                />
+                {uploadedImageSrc ? (
+                  <img
+                    src={uploadedImageSrc}
+                    alt="Uploaded QR Image"
+                    className="w-full h-full object-contain bg-slate-950"
+                  />
+                ) : capturedFrameSrc ? (
+                  <img
+                    src={capturedFrameSrc}
+                    alt="Captured Camera Frame"
+                    className="w-full h-full object-cover bg-slate-950"
+                  />
+                ) : (
+                  <video 
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    className="w-full h-full object-cover"
+                  />
+                )}
 
                 {/* Dark Vignette Overlay for Camera Feed */}
                 <div className="absolute inset-0 bg-black/25 pointer-events-none z-0" />
+
+                {/* Top Active Scanning Status Badge */}
+                {(isProcessingScan || uploadedImageSrc) && (
+                  <div className="absolute top-4 z-30 flex items-center gap-2 bg-sky-500/90 backdrop-blur-md px-4 py-1.5 rounded-full text-white font-extrabold text-xs sm:text-sm shadow-xl animate-pulse border border-sky-300">
+                    <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
+                    <span>
+                      {uploadedImageSrc
+                        ? (isAmharic ? 'የተጫነውን ምስል በመተንተን እና በመቃኘት ላይ...' : 'Scanning Uploaded Image...')
+                        : (isAmharic ? 'QR ኮድ በመተንተን እና በመቃኘት ላይ...' : 'Capturing & Processing QR Code...')}
+                    </span>
+                  </div>
+                )}
 
                 {/* Custom Live Scanner Overlay UI matching Reference Image */}
                 <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-4 sm:p-5 z-10">
