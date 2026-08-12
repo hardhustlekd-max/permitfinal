@@ -79,6 +79,10 @@ export const TablesPage: React.FC<TablesPageProps> = ({
   // --- REGISTRATIONS TABLE STATE ---
   const [regSearch, setRegSearch] = useState('');
   const [regStatusFilter, setRegStatusFilter] = useState<string>('all');
+  const [regCategoryFilter, setRegCategoryFilter] = useState<string>('all');
+  const [regPage, setRegPage] = useState(1);
+  const [regPageSize, setRegPageSize] = useState(10);
+
   const [selectedRegForQR, setSelectedRegForQR] = useState<MotorcycleRegistration | null>(null);
   const [selectedRegForA4, setSelectedRegForA4] = useState<MotorcycleRegistration | null>(null);
   const [selectedRegForSticker, setSelectedRegForSticker] = useState<MotorcycleRegistration | null>(null);
@@ -98,8 +102,17 @@ export const TablesPage: React.FC<TablesPageProps> = ({
     const matchesStatus =
       regStatusFilter === 'all' ? true : r.status === regStatusFilter;
 
-    return matchesSearch && matchesStatus;
+    const matchesCategory =
+      regCategoryFilter === 'all' ? true : r.vehicleCategory === regCategoryFilter;
+
+    return matchesSearch && matchesStatus && matchesCategory;
   });
+
+  const totalRegs = filteredRegistrations.length;
+  const totalRegPages = Math.ceil(totalRegs / regPageSize) || 1;
+  const activeRegPage = Math.min(regPage, totalRegPages);
+  const regStartIndex = (activeRegPage - 1) * regPageSize;
+  const paginatedRegistrations = filteredRegistrations.slice(regStartIndex, regStartIndex + regPageSize);
 
   const handleConfirmReject = (id: string) => {
     if (!rejectReason.trim()) return;
@@ -142,6 +155,8 @@ export const TablesPage: React.FC<TablesPageProps> = ({
   // --- PRINT ORDERS TABLE STATE ---
   const [printSearch, setPrintSearch] = useState('');
   const [printStatusFilter, setPrintStatusFilter] = useState<string>('all');
+  const [printPage, setPrintPage] = useState(1);
+  const [printPageSize, setPrintPageSize] = useState(10);
 
   const filteredPrintOrders = printOrders.filter((p) => {
     const matchesSearch =
@@ -153,6 +168,12 @@ export const TablesPage: React.FC<TablesPageProps> = ({
 
     return matchesSearch && matchesStatus;
   });
+
+  const totalPrintOrders = filteredPrintOrders.length;
+  const totalPrintPages = Math.ceil(totalPrintOrders / printPageSize) || 1;
+  const activePrintPage = Math.min(printPage, totalPrintPages);
+  const printStartIndex = (activePrintPage - 1) * printPageSize;
+  const paginatedPrintOrders = filteredPrintOrders.slice(printStartIndex, printStartIndex + printPageSize);
 
   return (
     <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-xs overflow-hidden">
@@ -223,32 +244,51 @@ export const TablesPage: React.FC<TablesPageProps> = ({
               />
             </div>
 
-            {/* Status Tabs */}
-            <div className="flex flex-wrap gap-1 bg-surface-container p-1 rounded-xl text-xs">
-              {['all', 'pending_approval', 'approved', 'ordered_print', 'printed', 'rejected'].map((statusKey) => (
-                <button
-                  key={statusKey}
-                  type="button"
-                  onClick={() => setRegStatusFilter(statusKey)}
-                  className={`px-3 py-1 rounded-lg font-bold transition-colors cursor-pointer capitalize ${
-                    regStatusFilter === statusKey
-                      ? 'bg-primary text-white shadow-xs'
-                      : 'text-secondary hover:text-on-surface'
-                  }`}
-                >
-                  {statusKey === 'all'
-                    ? (isAmharic ? 'ሁሉንም' : 'All')
-                    : statusKey === 'pending_approval'
-                    ? (isAmharic ? 'የሚጠበቁ' : 'Pending')
-                    : statusKey === 'approved'
-                    ? (isAmharic ? 'የፀደቁ' : 'Approved')
-                    : statusKey === 'ordered_print'
-                    ? (isAmharic ? 'ለሕትመት' : 'In Print')
-                    : statusKey === 'printed'
-                    ? (isAmharic ? 'የታተሙ' : 'Printed')
-                    : (isAmharic ? 'ተሰረዙ' : 'Rejected')}
-                </button>
-              ))}
+            {/* Filter controls row */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <select
+                value={regCategoryFilter}
+                onChange={(e) => {
+                  setRegCategoryFilter(e.target.value);
+                  setRegPage(1);
+                }}
+                className="bg-surface border border-outline-variant rounded-xl px-2.5 py-1.5 text-xs text-on-surface font-bold focus:outline-none"
+              >
+                <option value="all">{isAmharic ? 'ሁሉም አይነቶች (All EV/Gas)' : 'All Vehicle Categories'}</option>
+                <option value="electric">{isAmharic ? 'ኢቪ (Electric EV)' : 'Electric (EV)'}</option>
+                <option value="gasoline">{isAmharic ? 'ቤንዚን (Gasoline)' : 'Gasoline'}</option>
+              </select>
+
+              {/* Status Tabs */}
+              <div className="flex flex-wrap gap-1 bg-surface-container p-1 rounded-xl text-xs overflow-x-auto">
+                {['all', 'pending_approval', 'approved', 'ordered_print', 'printed', 'rejected'].map((statusKey) => (
+                  <button
+                    key={statusKey}
+                    type="button"
+                    onClick={() => {
+                      setRegStatusFilter(statusKey);
+                      setRegPage(1);
+                    }}
+                    className={`px-3 py-1 rounded-lg font-bold transition-colors cursor-pointer capitalize whitespace-nowrap ${
+                      regStatusFilter === statusKey
+                        ? 'bg-primary text-white shadow-xs'
+                        : 'text-secondary hover:text-on-surface'
+                    }`}
+                  >
+                    {statusKey === 'all'
+                      ? (isAmharic ? 'ሁሉንም' : 'All')
+                      : statusKey === 'pending_approval'
+                      ? (isAmharic ? 'የሚጠበቁ' : 'Pending')
+                      : statusKey === 'approved'
+                      ? (isAmharic ? 'የፀደቁ' : 'Approved')
+                      : statusKey === 'ordered_print'
+                      ? (isAmharic ? 'ለሕትመት' : 'In Print')
+                      : statusKey === 'printed'
+                      ? (isAmharic ? 'የታተሙ' : 'Printed')
+                      : (isAmharic ? 'ተሰረዙ' : 'Rejected')}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -263,7 +303,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                 {isAmharic ? 'ምንም የሚመሳሰል መዝገብ አልተገኘም' : 'No matching vehicle records found.'}
               </div>
             ) : (
-              filteredRegistrations.map((reg) => {
+              paginatedRegistrations.map((reg) => {
                 const isExpanded = !!expandedRegs[reg.id];
                 return (
                   <div key={reg.id} className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-2xs">
@@ -416,7 +456,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                     </td>
                   </tr>
                 ) : (
-                  filteredRegistrations.map((reg) => (
+                  paginatedRegistrations.map((reg) => (
                     <tr key={reg.id} className="hover:bg-surface-container-low transition-colors text-[13px]">
                       <td className="px-4 py-3">
                         <div className="font-medium text-on-surface">{reg.fullName}</div>
@@ -510,6 +550,57 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Registration Pagination Bar */}
+          <div className="bg-surface-container/30 border border-outline-variant rounded-xl px-4 py-2.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-secondary font-medium mt-2">
+            <div className="flex items-center gap-2">
+              <span>{isAmharic ? 'በአንድ ገጽ:' : 'Per page:'}</span>
+              <select
+                value={regPageSize}
+                onChange={(e) => {
+                  setRegPageSize(Number(e.target.value));
+                  setRegPage(1);
+                }}
+                className="bg-surface border border-outline-variant rounded-lg px-2 py-1 font-bold text-on-surface focus:outline-none"
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+              </select>
+              <span>
+                {isAmharic
+                  ? `${regStartIndex + 1}-${Math.min(regStartIndex + regPageSize, totalRegs)} ከ ${totalRegs} መዝገቦች`
+                  : `Showing ${regStartIndex + 1}-${Math.min(regStartIndex + regPageSize, totalRegs)} of ${totalRegs} entries`}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                disabled={activeRegPage <= 1}
+                onClick={() => setRegPage(activeRegPage - 1)}
+                className="px-2.5 py-1 bg-surface hover:bg-surface-container border border-outline-variant rounded-lg disabled:opacity-40 disabled:cursor-not-allowed font-bold flex items-center gap-1 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[16px]">chevron_left</span>
+                <span>{isAmharic ? 'ቀዳሚ' : 'Prev'}</span>
+              </button>
+
+              <span className="px-2 font-bold font-mono text-on-surface">
+                {activeRegPage} / {totalRegPages}
+              </span>
+
+              <button
+                type="button"
+                disabled={activeRegPage >= totalRegPages}
+                onClick={() => setRegPage(activeRegPage + 1)}
+                className="px-2.5 py-1 bg-surface hover:bg-surface-container border border-outline-variant rounded-lg disabled:opacity-40 disabled:cursor-not-allowed font-bold flex items-center gap-1 cursor-pointer"
+              >
+                <span>{isAmharic ? 'ቀጣይ' : 'Next'}</span>
+                <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -718,7 +809,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                 {isAmharic ? 'ምንም የሚመሳሰል የሕትመት ትእዛዝ አልተገኘም' : 'No matching print orders found.'}
               </div>
             ) : (
-              filteredPrintOrders.map((order) => {
+              paginatedPrintOrders.map((order) => {
                 const isExpanded = !!expandedOrders[order.id];
                 return (
                   <div key={order.id} className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-2xs">
@@ -815,7 +906,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                     </td>
                   </tr>
                 ) : (
-                  filteredPrintOrders.map((order) => (
+                  paginatedPrintOrders.map((order) => (
                     <tr key={order.id} className="hover:bg-surface-container/30 transition-colors">
                       <td className="px-2.5 py-2 font-mono font-bold text-blue-700">{order.id}</td>
                       <td className="px-2.5 py-2 font-bold text-on-surface">{order.totalItems} ID Badges & Stickers</td>
@@ -862,6 +953,57 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Print Orders Pagination Bar */}
+          <div className="bg-surface-container/30 border border-outline-variant rounded-xl px-4 py-2.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-secondary font-medium mt-2">
+            <div className="flex items-center gap-2">
+              <span>{isAmharic ? 'በአንድ ገጽ:' : 'Per page:'}</span>
+              <select
+                value={printPageSize}
+                onChange={(e) => {
+                  setPrintPageSize(Number(e.target.value));
+                  setPrintPage(1);
+                }}
+                className="bg-surface border border-outline-variant rounded-lg px-2 py-1 font-bold text-on-surface focus:outline-none"
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+              </select>
+              <span>
+                {isAmharic
+                  ? `${printStartIndex + 1}-${Math.min(printStartIndex + printPageSize, totalPrintOrders)} ከ ${totalPrintOrders} ትእዛዞች`
+                  : `Showing ${printStartIndex + 1}-${Math.min(printStartIndex + printPageSize, totalPrintOrders)} of ${totalPrintOrders} entries`}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                disabled={activePrintPage <= 1}
+                onClick={() => setPrintPage(activePrintPage - 1)}
+                className="px-2.5 py-1 bg-surface hover:bg-surface-container border border-outline-variant rounded-lg disabled:opacity-40 disabled:cursor-not-allowed font-bold flex items-center gap-1 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[16px]">chevron_left</span>
+                <span>{isAmharic ? 'ቀዳሚ' : 'Prev'}</span>
+              </button>
+
+              <span className="px-2 font-bold font-mono text-on-surface">
+                {activePrintPage} / {totalPrintPages}
+              </span>
+
+              <button
+                type="button"
+                disabled={activePrintPage >= totalPrintPages}
+                onClick={() => setPrintPage(activePrintPage + 1)}
+                className="px-2.5 py-1 bg-surface hover:bg-surface-container border border-outline-variant rounded-lg disabled:opacity-40 disabled:cursor-not-allowed font-bold flex items-center gap-1 cursor-pointer"
+              >
+                <span>{isAmharic ? 'ቀጣይ' : 'Next'}</span>
+                <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

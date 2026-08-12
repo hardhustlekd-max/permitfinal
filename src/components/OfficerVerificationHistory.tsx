@@ -26,7 +26,12 @@ export const OfficerVerificationHistory: React.FC<OfficerVerificationHistoryProp
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'verified' | 'warning' | 'flagged'>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [selectedLogForDetails, setSelectedLogForDetails] = useState<VerificationLog | null>(null);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   // Scanner modal state
   const [showScannerModal, setShowScannerModal] = useState(false);
@@ -49,9 +54,23 @@ export const OfficerVerificationHistory: React.FC<OfficerVerificationHistoryProp
       (log.officerNotes && log.officerNotes.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesStatus = statusFilter === 'all' ? true : log.verificationStatus === statusFilter;
+    const matchesCategory = categoryFilter === 'all' ? true : log.vehicleCategory === categoryFilter;
 
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesStatus && matchesCategory;
   });
+
+  // Calculate pagination slices
+  const totalItems = filteredLogs.length;
+  const totalPages = Math.ceil(totalItems / pageSize) || 1;
+  const activePage = Math.min(currentPage, totalPages);
+  const startIndex = (activePage - 1) * pageSize;
+  const paginatedLogs = filteredLogs.slice(startIndex, startIndex + pageSize);
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   const handleStartCameraScan = () => {
     setIsScanning(true);
@@ -233,16 +252,32 @@ export const OfficerVerificationHistory: React.FC<OfficerVerificationHistoryProp
           />
         </div>
 
-        {/* Status Filter Badges */}
-        <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto">
-          <span className="text-xs font-bold text-secondary whitespace-nowrap">
+        {/* Status & Category Filter Badges */}
+        <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto flex-wrap">
+          <select
+            value={categoryFilter}
+            onChange={(e) => {
+              setCategoryFilter(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="bg-surface border border-outline-variant rounded-xl px-2.5 py-1.5 text-xs text-on-surface font-bold focus:outline-none"
+          >
+            <option value="all">{isAmharic ? 'ሁሉም አይነቶች (All EV/Gas)' : 'All Vehicle Types'}</option>
+            <option value="electric">{isAmharic ? 'ኢቪ (Electric EV)' : 'Electric (EV)'}</option>
+            <option value="gasoline">{isAmharic ? 'ቤንዚን (Gasoline)' : 'Gasoline'}</option>
+          </select>
+
+          <span className="text-xs font-bold text-secondary whitespace-nowrap hidden sm:inline">
             {isAmharic ? 'ሁኔታ፡' : 'Filter:'}
           </span>
           {(['all', 'verified', 'warning', 'flagged'] as const).map((st) => (
             <button
               key={st}
               type="button"
-              onClick={() => setStatusFilter(st)}
+              onClick={() => {
+                setStatusFilter(st);
+                setCurrentPage(1);
+              }}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer capitalize whitespace-nowrap ${
                 statusFilter === st
                   ? 'bg-primary text-white shadow-xs'
@@ -282,8 +317,9 @@ export const OfficerVerificationHistory: React.FC<OfficerVerificationHistoryProp
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-outline-variant">
-            {filteredLogs.map((log) => (
+          <>
+            <div className="divide-y divide-outline-variant">
+              {paginatedLogs.map((log) => (
               <div
                 key={log.id}
                 className="p-4 hover:bg-surface-container/30 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4"
@@ -373,7 +409,59 @@ export const OfficerVerificationHistory: React.FC<OfficerVerificationHistoryProp
                 </div>
               </div>
             ))}
-          </div>
+            </div>
+
+            {/* Pagination Controls Bar */}
+            <div className="bg-surface-container/30 border-t border-outline-variant px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-secondary font-medium">
+              <div className="flex items-center gap-2">
+                <span>{isAmharic ? 'በአንድ ገጽ:' : 'Per page:'}</span>
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-surface border border-outline-variant rounded-lg px-2 py-1 font-bold text-on-surface focus:outline-none"
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                </select>
+                <span>
+                  {isAmharic
+                    ? `${startIndex + 1}-${Math.min(startIndex + pageSize, totalItems)} ከ ${totalItems} መዝገቦች`
+                    : `Showing ${startIndex + 1}-${Math.min(startIndex + pageSize, totalItems)} of ${totalItems} entries`}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  disabled={activePage <= 1}
+                  onClick={() => handlePageChange(activePage - 1)}
+                  className="px-2.5 py-1 bg-surface hover:bg-surface-container border border-outline-variant rounded-lg disabled:opacity-40 disabled:cursor-not-allowed font-bold flex items-center gap-1 cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[16px]">chevron_left</span>
+                  <span>{isAmharic ? 'ቀዳሚ' : 'Prev'}</span>
+                </button>
+
+                <span className="px-2 font-bold font-mono text-on-surface">
+                  {activePage} / {totalPages}
+                </span>
+
+                <button
+                  type="button"
+                  disabled={activePage >= totalPages}
+                  onClick={() => handlePageChange(activePage + 1)}
+                  className="px-2.5 py-1 bg-surface hover:bg-surface-container border border-outline-variant rounded-lg disabled:opacity-40 disabled:cursor-not-allowed font-bold flex items-center gap-1 cursor-pointer"
+                >
+                  <span>{isAmharic ? 'ቀጣይ' : 'Next'}</span>
+                  <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+                </button>
+              </div>
+            </div>
+          </>
         )}
       </div>
 
