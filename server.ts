@@ -59,9 +59,17 @@ app.use(express.json({ limit: '15mb' }));
 app.use((req, res, next) => {
   if (req.url.startsWith('/api/index.ts')) {
     req.url = req.url.replace('/api/index.ts', '/api');
-    if (req.url === '/api' || req.url === '/api/') {
-      req.url = '/api/health';
-    }
+  } else if (req.url.startsWith('/api/index')) {
+    req.url = req.url.replace('/api/index', '/api');
+  }
+
+  // Handle case where route is passed without /api prefix
+  if (!req.url.startsWith('/api') && !req.url.startsWith('/static') && !req.url.startsWith('/assets') && !req.url.startsWith('/@') && req.url !== '/' && !req.url.startsWith('/index.html')) {
+    req.url = `/api${req.url.startsWith('/') ? '' : '/'}${req.url}`;
+  }
+
+  if (req.url === '/api' || req.url === '/api/') {
+    req.url = '/api/health';
   }
   next();
 });
@@ -426,7 +434,15 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 });
 
 // --- VITE MIDDLEWARE FOR DEVELOPMENT AND STATIC SERVING FOR PRODUCTION ---
-if (!process.env.VERCEL) {
+const isServerless = Boolean(
+  process.env.VERCEL ||
+  process.env.VERCEL_ENV ||
+  process.env.NOW_REGION ||
+  process.env.AWS_LAMBDA_FUNCTION_NAME ||
+  process.env.LAMBDA_TASK_ROOT
+);
+
+if (!isServerless) {
   async function startStandaloneServer() {
     if (process.env.NODE_ENV !== 'production') {
       const { createServer: createViteServer } = await import('vite');
@@ -437,14 +453,16 @@ if (!process.env.VERCEL) {
       app.use(vite.middlewares);
     } else {
       const distPath = path.join(process.cwd(), 'dist');
-      app.use(express.static(distPath));
-      app.get('*', (req, res) => {
-        res.sendFile(path.join(distPath, 'index.html'));
-      });
+      if (fs.existsSync(distPath)) {
+        app.use(express.static(distPath));
+        app.get('*', (req, res) => {
+          res.sendFile(path.join(distPath, 'index.html'));
+        });
+      }
     }
 
     app.listen(PORT, '0.0.0.0', () => {
-      console.log(`[Server] Full-stack Firebase Admin application running on http://localhost:${PORT}`);
+      console.log(`[Server] Full-stack application running on http://localhost:${PORT}`);
     });
   }
   startStandaloneServer().catch((err) => {

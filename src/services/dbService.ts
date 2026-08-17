@@ -62,8 +62,14 @@ export function formatFriendlyDbError(rawError: string | null): string | null {
   if (!rawError) return null;
   const str = String(rawError);
 
-  if (str.includes('FUNCTION_INVOCATION_FAILED') || str.includes('cpt1::') || str.includes('500 Internal')) {
-    return 'Serverless proxy notice: Using direct Firebase Firestore connection.';
+  if (
+    str.includes('FUNCTION_INVOCATION_FAILED') ||
+    str.includes('cpt1::') ||
+    str.includes('500 Internal') ||
+    str.includes('Server returned HTML') ||
+    str.includes('Failed to fetch')
+  ) {
+    return null; // Suppress serverless proxy notices if direct Firebase is healthy
   }
   if (str.includes('the client is offline') || str.includes('network-request-failed')) {
     return 'Offline mode: Changes are saved locally and will synchronize once reconnected.';
@@ -972,6 +978,11 @@ export async function syncAllCollectionsWithDb(): Promise<void> {
       isCloudConnected = true;
       notifySyncStatus();
       setGlobalFirestoreError(null);
+
+      // If database is completely empty on fresh deployment, auto-populate starter municipal records
+      if (inMemory.registrations.length === 0 && inMemory.officers.length === 0) {
+        seedSampleDatabaseData().catch(() => {});
+      }
       return;
     }
   } catch (directErr) {

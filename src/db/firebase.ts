@@ -13,20 +13,34 @@ import {
   onSnapshot,
 } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import defaultConfig from '../../firebase-applet-config.json';
 
-// Read config from imported firebase-applet-config.json or fallback
+const DEFAULT_FIREBASE_CONFIG = {
+  projectId: 'automated-abbey-dzp2g',
+  appId: '1:328488074202:web:54062adb6e3313b33adee3',
+  apiKey: 'AIzaSyCv9Bd_R_fpm2N3m9lZ25dqCxZgk1IJf10',
+  authDomain: 'automated-abbey-dzp2g.firebaseapp.com',
+  firestoreDatabaseId: 'permit',
+};
+
+// Safe configuration loading for both client-side Vite and Node.js serverless runtimes
 function loadFirebaseConfig() {
-  if (defaultConfig && defaultConfig.projectId && defaultConfig.apiKey) {
-    return defaultConfig;
+  if (typeof process !== 'undefined' && process.env) {
+    const envProj = process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID;
+    const envKey = process.env.FIREBASE_API_KEY || process.env.VITE_FIREBASE_API_KEY;
+    const envAppId = process.env.FIREBASE_APP_ID || process.env.VITE_FIREBASE_APP_ID;
+    const envDb = process.env.FIREBASE_DATABASE_ID || process.env.VITE_FIREBASE_DATABASE_ID;
+
+    if (envProj && envKey) {
+      return {
+        projectId: envProj,
+        appId: envAppId || DEFAULT_FIREBASE_CONFIG.appId,
+        apiKey: envKey,
+        authDomain: `${envProj}.firebaseapp.com`,
+        firestoreDatabaseId: envDb || 'permit',
+      };
+    }
   }
-  return {
-    projectId: 'automated-abbey-dzp2g',
-    appId: '1:328488074202:web:54062adb6e3313b33adee3',
-    apiKey: 'AIzaSyCv9Bd_R_fpm2N3m9lZ25dqCxZgk1IJf10',
-    authDomain: 'automated-abbey-dzp2g.firebaseapp.com',
-    firestoreDatabaseId: 'permit',
-  };
+  return DEFAULT_FIREBASE_CONFIG;
 }
 
 export const firebaseConfig = loadFirebaseConfig();
