@@ -1,0 +1,372 @@
+          {/* Mobile Collapsed Cards View (< md) */}
+          <div className="block md:hidden space-y-3">
+            {registrations.length === 0 ? (
+              <div className="p-6 text-center text-secondary text-xs bg-surface-container/30 rounded-xl font-bold">
+                {isAmharic ? 'ምንም መዝገብ አልተገኘም (ባዶ / Empty)' : 'Empty — No vehicle records found.'}
+              </div>
+            ) : filteredRegistrations.length === 0 ? (
+              <div className="p-6 text-center text-secondary text-xs bg-surface-container/30 rounded-xl space-y-2">
+                <div>{isAmharic ? 'ምንም የሚመሳሰል መዝገብ አልተገኘም' : 'No matching vehicle records found.'}</div>
+                {regSearch && (
+                  <button
+                    type="button"
+                    onClick={() => setRegSearch('')}
+                    className="px-3 py-1.5 bg-surface-container hover:bg-surface-container-high text-primary font-bold text-xs rounded-xl border border-outline-variant transition-colors cursor-pointer"
+                  >
+                    {isAmharic ? 'ፍለጋውን አጽዳ' : 'Clear Search'}
+                  </button>
+                )}
+              </div>
+            ) : (
+              paginatedRegistrations.map((reg) => {
+                const isExpanded = !!expandedRegs[reg.id];
+                return (
+                  <div key={reg.id} className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-2xs">
+                    {/* Collapsed Header Bar */}
+                    <div
+                      onClick={() => toggleRegExpand(reg.id)}
+                      className="p-3 bg-surface-container/30 hover:bg-surface-container/60 cursor-pointer flex items-center justify-between gap-2 transition-colors select-none"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-xs text-on-surface truncate">{reg.fullName}</span>
+                          <span className="font-mono font-bold text-[11px] text-primary bg-sky-50 px-1.5 py-0.5 rounded border border-sky-200 shrink-0">
+                            {reg.plateNumber}
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-secondary mt-0.5 flex items-center gap-2">
+                          <span>{reg.phone}</span>
+                          <span>•</span>
+                          <span className="font-mono">{reg.registrationDate}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        {renderStatusIconBadge(reg.status)}
+                        <span className="material-symbols-outlined text-[18px] text-outline">
+                          {isExpanded ? 'expand_less' : 'expand_more'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Collapsible Details Body */}
+                    {isExpanded && (
+                      <div className="p-3 border-t border-outline-variant/60 space-y-2.5 text-xs bg-surface-container/50">
+                        <div className="grid grid-cols-2 gap-2 text-[11px]">
+                          <DataField label={isAmharic ? 'የመዝገብ መለያ (ID):' : 'Registration ID:'} value={reg.id} isMono />
+                          <DataField label={isAmharic ? 'ክፍለ ከተማ:' : 'Sub-City:'} value={reg.subCity || '—'} />
+                          <DataField 
+                            label={isAmharic ? 'ዓይነት (Category):' : 'Category:'} 
+                            value={reg.vehicleCategory === 'electric' ? (isAmharic ? 'ኤሌክትሪክ (EV)' : 'Electric (EV)') : (isAmharic ? 'ቤንዚን (Gasoline)' : 'Gasoline (<110cc)')} 
+                            isPrimary 
+                          />
+                          <DataField label={isAmharic ? 'ሴሪያል / ቻሲስ ቁጥር:' : 'Chassis / Serial No:'} value={reg.engineOrSerialNo || '—'} isMono />
+                          {reg.motorBrand && (
+                            <DataField label={isAmharic ? 'ብራንድ / ሞዴል:' : 'Brand & Model:'} value={`${reg.motorBrand} ${reg.motorModel || ''}`} />
+                          )}
+                          <DataField label={isAmharic ? 'የተመዘገበበት ባጅ:' : 'Registered By:'} value={reg.registeredBy || '—'} isMono />
+                        </div>
+
+                        {/* Document Photo Thumbnails Row */}
+                        {(reg.userPortraitPhoto || reg.nationalIdPhoto || reg.nationalIdBackPhoto || reg.drivingLicensePhoto || reg.drivingPermitPhoto) && (
+                          <div className="flex items-center gap-2 pt-2 border-t border-outline-variant/40 overflow-x-auto pb-1">
+                            {reg.userPortraitPhoto && (
+                              <div
+                                onClick={() => setZoomedImage({ url: reg.userPortraitPhoto!, title: `${reg.fullName} — ${isAmharic ? 'የባለቤት ፎቶ' : 'Owner Portrait'}` })}
+                                className="w-12 h-14 rounded-lg overflow-hidden border border-outline-variant bg-slate-900 shrink-0 cursor-pointer group relative"
+                                title={isAmharic ? 'የባለቤት ፎቶ (አጉላ)' : 'Portrait Photo (Click to Zoom)'}
+                              >
+                                <SmartImage src={reg.userPortraitPhoto} alt="Portrait" fallbackIcon="person" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                                  <span className="material-symbols-outlined text-[14px]">zoom_in</span>
+                                </div>
+                              </div>
+                            )}
+                            {reg.nationalIdPhoto && (
+                              <div
+                                onClick={() => setZoomedImage({ url: reg.nationalIdPhoto!, title: `${reg.fullName} — ${isAmharic ? 'ብሔራዊ መታወቂያ (ፊት)' : 'National ID (Front)'}` })}
+                                className="w-14 h-14 rounded-lg overflow-hidden border border-outline-variant bg-slate-900 shrink-0 cursor-pointer group relative"
+                                title={isAmharic ? 'ብሔራዊ መታወቂያ (አጉላ)' : 'National ID (Click to Zoom)'}
+                              >
+                                <SmartImage src={reg.nationalIdPhoto} alt="National ID" fallbackIcon="badge" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                                  <span className="material-symbols-outlined text-[14px]">zoom_in</span>
+                                </div>
+                              </div>
+                            )}
+                            {reg.nationalIdBackPhoto && (
+                              <div
+                                onClick={() => setZoomedImage({ url: reg.nationalIdBackPhoto!, title: `${reg.fullName} — ${isAmharic ? 'ብሔራዊ መታወቂያ (ጀርባ)' : 'National ID (Back)'}` })}
+                                className="w-14 h-14 rounded-lg overflow-hidden border border-outline-variant bg-slate-900 shrink-0 cursor-pointer group relative"
+                                title={isAmharic ? 'ብሔራዊ መታወቂያ ጀርባ (አጉላ)' : 'National ID Back (Click to Zoom)'}
+                              >
+                                <SmartImage src={reg.nationalIdBackPhoto} alt="National ID Back" fallbackIcon="badge" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                                  <span className="material-symbols-outlined text-[14px]">zoom_in</span>
+                                </div>
+                              </div>
+                            )}
+                            {reg.drivingLicensePhoto && (
+                              <div
+                                onClick={() => setZoomedImage({ url: reg.drivingLicensePhoto!, title: `${reg.fullName} — ${isAmharic ? 'የመንጃ ፍቃድ' : 'Driving License'}` })}
+                                className="w-14 h-14 rounded-lg overflow-hidden border border-outline-variant bg-slate-900 shrink-0 cursor-pointer group relative"
+                                title={isAmharic ? 'የመንጃ ፍቃድ (አጉላ)' : 'Driving License (Click to Zoom)'}
+                              >
+                                <SmartImage src={reg.drivingLicensePhoto} alt="Driving License" fallbackIcon="card_membership" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                                  <span className="material-symbols-outlined text-[14px]">zoom_in</span>
+                                </div>
+                              </div>
+                            )}
+                            {reg.drivingPermitPhoto && (
+                              <div
+                                onClick={() => setZoomedImage({ url: reg.drivingPermitPhoto!, title: `${reg.fullName} — ${isAmharic ? 'የመንቀሳቀሻ ፍቃድ' : 'Movement Permit'}` })}
+                                className="w-14 h-14 rounded-lg overflow-hidden border border-outline-variant bg-slate-900 shrink-0 cursor-pointer group relative"
+                                title={isAmharic ? 'የመንቀሳቀሻ ፍቃድ (አጉላ)' : 'Movement Permit (Click to Zoom)'}
+                              >
+                                <SmartImage src={reg.drivingPermitPhoto} alt="Permit" fallbackIcon="menu_book" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                                  <span className="material-symbols-outlined text-[14px]">zoom_in</span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Actions Footer inside Collapsed Card */}
+                        <div className="pt-2 border-t border-outline-variant/50 flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <button
+                              type="button"
+                              onClick={() => setSelectedRegForDetails(reg)}
+                              className="px-2.5 py-1.5 bg-surface-container hover:bg-surface-container-high text-on-surface font-bold rounded-lg text-xs flex items-center gap-1 cursor-pointer"
+                            >
+                              <span className="material-symbols-outlined text-[16px]">visibility</span>
+                              <span>{isAmharic ? 'ዝርዝር' : 'Details'}</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => setSelectedRegForQR(reg)}
+                              className="px-2.5 py-1.5 bg-surface-container hover:bg-surface-container-high text-on-surface font-bold rounded-lg text-xs flex items-center gap-1 cursor-pointer"
+                            >
+                              <span className="material-symbols-outlined text-[16px]">qr_code_2</span>
+                              <span>{isAmharic ? 'መታወቂያ' : 'ID Card'}</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => setSelectedRegForA4(reg)}
+                              className="px-2.5 py-1.5 bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-bold rounded-lg text-xs flex items-center gap-1 cursor-pointer shadow-2xs"
+                              title={isAmharic ? 'የመንቀሳቀሻ ፍቃድ ወረቀት አትም' : 'Print Movement Permit'}
+                            >
+                              <span className="material-symbols-outlined text-[16px]">print</span>
+                              <span>{isAmharic ? 'ፍቃድ አትም' : 'Print Permit'}</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => setSelectedRegForSticker(reg)}
+                              className="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold rounded-lg text-xs flex items-center gap-1 cursor-pointer shadow-2xs"
+                              title={isAmharic ? 'የሞተር QR ተለጣፊ አትም' : 'Print Vehicle QR Sticker'}
+                            >
+                              <span className="material-symbols-outlined text-[16px]">qr_code_scanner</span>
+                              <span>{isAmharic ? 'ተለጣፊ' : 'Sticker'}</span>
+                            </button>
+                          </div>
+
+                          {userRole === 'admin' && reg.status === 'pending_approval' && (
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => onApproveRegistration(reg.id)}
+                                className="px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs cursor-pointer"
+                              >
+                                {isAmharic ? 'አፅድቅ' : 'Approve'}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setRejectingId(reg.id)}
+                                className="px-3 py-1.5 bg-red-100 text-red-800 font-bold rounded-lg text-xs cursor-pointer"
+                              >
+                                {isAmharic ? 'ሰርዝ' : 'Reject'}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Desktop Table View (>= md) */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-transparent text-secondary font-bold uppercase text-[10px] tracking-wider border-b border-outline-variant">
+                <tr>
+                  <th className="px-4 py-3">{isAmharic ? 'ባለቤት / ስም' : 'Owner & Sub-City'}</th>
+                  <th className="px-4 py-3">{isAmharic ? 'ሰሌዳ / መለያ' : 'Plate & ID'}</th>
+                  <th className="px-4 py-3">{isAmharic ? 'ዓይነት' : 'Category'}</th>
+                  <th className="px-4 py-3">{isAmharic ? 'ሴሪያል / ሞዴል' : 'Serial & Model'}</th>
+                  <th className="px-4 py-3">{isAmharic ? 'የተመዘገበበት ቀን' : 'Reg Date'}</th>
+                  <th className="px-4 py-3">{isAmharic ? 'ሁኔታ' : 'Status'}</th>
+                  <th className="px-4 py-3 text-right">{isAmharic ? 'እርምጃዎች' : 'Actions'}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-outline-variant/50">
+                {registrations.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="p-8 text-center text-secondary font-bold">
+                      {isAmharic ? 'ምንም መዝገብ አልተገኘም (ባዶ / Empty)' : 'Empty — No vehicle records stored.'}
+                    </td>
+                  </tr>
+                ) : filteredRegistrations.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="p-8 text-center text-secondary">
+                      <div className="flex flex-col items-center justify-center gap-2 py-4">
+                        <span className="font-semibold">{isAmharic ? 'ምንም የሚመሳሰል መዝገብ አልተገኘም' : 'No matching vehicle records found.'}</span>
+                        {regSearch && (
+                          <button
+                            type="button"
+                            onClick={() => setRegSearch('')}
+                            className="px-3 py-1.5 bg-surface-container hover:bg-surface-container-high text-primary font-bold text-xs rounded-xl border border-outline-variant transition-colors cursor-pointer"
+                          >
+                            {isAmharic ? 'ፍለጋውን አጽዳ' : 'Clear Search'}
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedRegistrations.map((reg) => (
+                    <tr key={reg.id} className="hover:bg-surface-container-low transition-colors text-[13px]">
+                      <td className="px-4 py-3">
+                        <div className="font-bold text-on-surface flex items-center gap-1.5">
+                          <span>{reg.fullName || '—'}</span>
+                          {reg.subCity && (
+                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300 border border-sky-200 dark:border-sky-800/50 font-normal">
+                              {reg.subCity}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-secondary font-mono">
+                          {reg.phone || '—'}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="font-mono font-bold text-primary">{reg.plateNumber || '—'}</div>
+                        <div className="text-[10px] font-mono text-secondary">{reg.id}</div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="px-2 py-1 rounded-md border border-outline-variant text-[10px] font-medium text-secondary">
+                          {reg.vehicleCategory === 'electric' 
+                            ? (isAmharic ? 'ኤሌክትሪክ (EV)' : 'Electric (EV)') 
+                            : (isAmharic ? 'ቤንዚን (Gasoline)' : 'Gasoline (<110cc)')}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="font-mono text-[12px] text-secondary font-medium">{reg.engineOrSerialNo || '—'}</div>
+                        {(reg.motorBrand || reg.motorModel) && (
+                          <div className="text-[10px] text-secondary uppercase font-semibold">
+                            {reg.motorBrand || ''} {reg.motorModel || ''}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="text-[12px] text-secondary font-mono">{reg.registrationDate || '—'}</div>
+                        {reg.registeredBy && (
+                          <div className="text-[10px] text-secondary/80 font-mono">By: {reg.registeredBy}</div>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        {renderStatusIconBadge(reg.status)}
+                      </td>
+                      <td className="px-2.5 py-2 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          {/* Admin approval buttons if pending */}
+                          {userRole === 'admin' && reg.status === 'pending_approval' && (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => onApproveRegistration(reg.id)}
+                                className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-[10px] cursor-pointer shadow-xs"
+                              >
+                                {isAmharic ? 'አፅድቅ' : 'Approve'}
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => setRejectingId(reg.id)}
+                                className="px-2 py-1 bg-red-100 text-red-800 hover:bg-red-200 font-bold rounded-lg text-[10px] cursor-pointer"
+                              >
+                                {isAmharic ? 'ሰርዝ' : 'Reject'}
+                              </button>
+                            </>
+                          )}
+
+                          {/* For Clerk on pending records, hide action buttons and show pending status */}
+                          {userRole === 'clerk' && reg.status === 'pending_approval' ? (
+                            <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-1 rounded-md">
+                              {isAmharic ? 'በማፅደቅ ላይ' : 'Awaiting Approval'}
+                            </span>
+                          ) : (
+                            <>
+                              {/* Inspect Full Details button */}
+                              <button
+                                type="button"
+                                onClick={() => setSelectedRegForDetails(reg)}
+                                className="p-1.5 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-lg transition-colors cursor-pointer"
+                                title={isAmharic ? 'ሙሉ መረጃ ተመልከት' : 'View Full Details & Documents'}
+                              >
+                                <span className="material-symbols-outlined text-[16px]">visibility</span>
+                              </button>
+
+                              {/* Inspect QR Card button */}
+                              <button
+                                type="button"
+                                onClick={() => setSelectedRegForQR(reg)}
+                                className="p-1.5 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-lg transition-colors cursor-pointer"
+                                title={isAmharic ? 'መታወቂያ እና QR ተመልከት' : 'Inspect Badge & QR Code'}
+                              >
+                                <span className="material-symbols-outlined text-[16px]">qr_code_2</span>
+                              </button>
+
+                              {/* Full A4 Size Permit Paper button — only when approved */}
+                              {(reg.status === 'approved' || reg.status === 'printed' || reg.status === 'ordered_print') && (
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedRegForA4(reg)}
+                                  className="p-1.5 bg-sky-50 hover:bg-sky-100 text-sky-800 rounded-lg transition-colors cursor-pointer border border-sky-200 flex items-center gap-1 font-bold text-[10px]"
+                                  title={isAmharic ? 'የመንቀሳቀሻ ፍቃድ ወረቀት አትም' : 'Print Movement Permit'}
+                                >
+                                  <span className="material-symbols-outlined text-[16px]">print</span>
+                                  <span className="hidden xl:inline">{isAmharic ? 'ፍቃድ አትም' : 'Print Permit'}</span>
+                                </button>
+                              )}
+
+                              {/* Print Vehicle Sticker button — only when approved */}
+                              {(reg.status === 'approved' || reg.status === 'printed' || reg.status === 'ordered_print') && (
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedRegForSticker(reg)}
+                                  className="p-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-lg transition-colors cursor-pointer border border-emerald-200 flex items-center gap-1 font-bold text-[10px]"
+                                  title={isAmharic ? 'የሞተር QR ተለጣፊ አትም' : 'Print Vehicle QR Sticker'}
+                                >
+                                  <span className="material-symbols-outlined text-[16px]">qr_code_scanner</span>
+                                  <span className="hidden xl:inline">{isAmharic ? 'ተለጣፊ አትም' : 'Print Sticker'}</span>
+                                </button>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
