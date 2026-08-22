@@ -37,46 +37,7 @@ interface TablesPageProps {
     status: 'pending' | 'in_printing' | 'completed'
   ) => void;
   onAddVerificationLog?: (log: VerificationLog) => void;
-  onSeedSampleData?: () => void;
 }
-
-const SeedDataBanner: React.FC<{ isAmharic: boolean; onSeed: () => void }> = ({ isAmharic, onSeed }) => {
-  const [loading, setLoading] = useState(false);
-  const handleSeed = async () => {
-    setLoading(true);
-    try {
-      await onSeed();
-    } finally {
-      setLoading(false);
-    }
-  };
-  return (
-    <div className="p-8 text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-xl mx-auto my-6 space-y-4 shadow-sm">
-      <div className="w-14 h-14 rounded-2xl bg-yellow-500/20 text-[#0B1E48] dark:text-yellow-400 flex items-center justify-center mx-auto">
-        <span className="material-symbols-outlined text-[32px] animate-spin">database_sync</span>
-      </div>
-      <div className="space-y-1.5">
-        <h3 className="font-black text-base text-slate-900 dark:text-white">
-          {isAmharic ? 'ዳታቤዙ ባዶ ነው' : 'Database Has No Records'}
-        </h3>
-        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-          {isAmharic
-            ? 'አዲሱ የፋየርቤዝ "permit" ዳታቤዝ በተሳካ ሁኔታ ተገናኝቷል። አዳዲስ መዝገቦችን በሲስተሙ ውስጥ ማከል ይችላሉ።'
-            : 'Your Firebase "permit" database is connected and ready. Seed sample data or add new motorcycle records.'}
-        </p>
-      </div>
-      <button
-        type="button"
-        disabled={loading}
-        onClick={handleSeed}
-        className="px-5 py-2.5 bg-[#0B1E48] hover:bg-[#071330] text-yellow-400 font-extrabold text-xs rounded-xl shadow-md transition-all cursor-pointer inline-flex items-center gap-2 disabled:opacity-50"
-      >
-        <span className="material-symbols-outlined text-[18px]">add_database</span>
-        <span>{isAmharic ? 'የናሙና መረጃዎችን ሙላ (Seed Data)' : 'Seed Sample Database Records'}</span>
-      </button>
-    </div>
-  );
-};
 
 export const TablesPage: React.FC<TablesPageProps> = ({
   lang,
@@ -90,7 +51,6 @@ export const TablesPage: React.FC<TablesPageProps> = ({
   onRejectRegistration,
   onUpdateOrderStatus,
   onAddVerificationLog,
-  onSeedSampleData,
 }) => {
   const isAmharic = lang === 'am';
 
@@ -129,7 +89,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({
       case 'pending':
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300 dark:border-amber-800 shadow-2xs animate-pulse" title={isAmharic ? 'የሚጠበቅ' : 'Pending'}>
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300 dark:border-amber-800 shadow-2xs" title={isAmharic ? 'የሚጠበቅ' : 'Pending'}>
             <Clock size={12} className="shrink-0" />
             <span className="hidden sm:inline">{isAmharic ? 'የሚጠበቅ' : 'Pending'}</span>
           </span>
@@ -377,51 +337,59 @@ export const TablesPage: React.FC<TablesPageProps> = ({
 
         {/* --- VIEW 1: REGISTRATIONS TABLE (FILTERED BY STATUS) --- */}
         {(activeTableTab === 'approved' || activeTableTab === 'pending' || activeTableTab === 'expired') && (
-          registrations.length === 0 && onSeedSampleData ? (
-            <SeedDataBanner isAmharic={isAmharic} onSeed={onSeedSampleData} />
-          ) : (
-            <div>
-              {/* Desktop Data Table (>= md) */}
-              <div className="hidden md:block overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-100 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 text-xs uppercase tracking-wider font-extrabold border-b border-slate-200 dark:border-slate-700">
-                      <th className="px-4 py-3.5 text-center w-12">#</th>
-                      <th className="px-4 py-3.5">{isAmharic ? 'የባለቤት ስም & ፎቶ' : 'Owner Name & Portrait'}</th>
-                      <th className="px-4 py-3.5">{isAmharic ? 'የሰሌዳ ቁጥር & አይነት' : 'Plate No & Category'}</th>
-                      <th className="px-4 py-3.5">{isAmharic ? 'ሴሪያል / ቻሲስ ቁጥር' : 'Chassis / Engine Serial'}</th>
-                      <th className="px-4 py-3.5">{isAmharic ? 'ክፍለ ከተማ & ቀን' : 'Sub-City & Date'}</th>
-                      <th className="px-4 py-3.5 text-center">{isAmharic ? 'የፈቃድ ሁኔታ' : 'Permit Status'}</th>
-                      <th className="px-4 py-3.5 text-right">{isAmharic ? 'እርምጃዎች' : 'Actions'}</th>
+          <div>
+            {/* Desktop Data Table (>= md) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-100 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 text-xs uppercase tracking-wider font-extrabold border-b border-slate-200 dark:border-slate-700">
+                    <th className="px-4 py-3.5 text-center w-12">#</th>
+                    <th className="px-4 py-3.5">{isAmharic ? 'የባለቤት ስም & ፎቶ' : 'Owner Name & Portrait'}</th>
+                    <th className="px-4 py-3.5">{isAmharic ? 'የሰሌዳ ቁጥር & አይነት' : 'Plate No & Category'}</th>
+                    <th className="px-4 py-3.5">{isAmharic ? 'ሴሪያል / ቻሲስ ቁጥር' : 'Chassis / Engine Serial'}</th>
+                    <th className="px-4 py-3.5">{isAmharic ? 'ክፍለ ከተማ & ቀን' : 'Sub-City & Date'}</th>
+                    <th className="px-4 py-3.5 text-center">{isAmharic ? 'የፈቃድ ሁኔታ' : 'Permit Status'}</th>
+                    <th className="px-4 py-3.5 text-right">{isAmharic ? 'እርምጃዎች' : 'Actions'}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+                  {registrations.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="p-12 text-center text-slate-500 dark:text-slate-400">
+                        <div className="flex flex-col items-center justify-center gap-2 max-w-sm mx-auto">
+                          <span className="material-symbols-outlined text-[36px] text-slate-400 dark:text-slate-600">inbox</span>
+                          <span className="font-bold text-sm text-slate-700 dark:text-slate-200">
+                            {isAmharic ? 'ምንም የተመዘገቡ መረጃዎች የሉም' : 'No Vehicle Registrations Found'}
+                          </span>
+                          <span className="text-xs text-slate-500 dark:text-slate-400">
+                            {isAmharic
+                              ? 'አዲስ የሞተር ብስክሌት መረጃዎች ሲመዘገቡ በዚህ ሰንጠረዥ ውስጥ ይዘረዘራሉ።'
+                              : 'Vehicle permit applications will appear in this table once submitted.'}
+                          </span>
+                        </div>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
-                    {registrations.length === 0 ? (
-                      <tr>
-                        <td colSpan={7} className="p-10 text-center text-slate-500 font-bold">
-                          {isAmharic ? 'ምንም መዝገብ አልተገኘም (ባዶ / Empty)' : 'No vehicle registrations stored in database.'}
-                        </td>
-                      </tr>
-                    ) : filteredRegistrations.length === 0 ? (
-                      <tr>
-                        <td colSpan={7} className="p-10 text-center text-slate-500">
-                          <div className="flex flex-col items-center justify-center gap-2 py-4">
-                            <span className="font-bold text-sm text-slate-700 dark:text-slate-300">
-                              {isAmharic ? 'ምንም የሚመሳሰል መዝገብ አልተገኘም' : 'No matching motorcycle records found.'}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setActiveTableTab('approved');
-                              }}
-                              className="px-3 py-1.5 bg-yellow-500 text-[#0B1E48] font-extrabold text-xs rounded-xl shadow-xs hover:bg-yellow-400 cursor-pointer"
-                            >
-                              {isAmharic ? 'የፀደቁትን አሳይ' : 'Show Approved Permits'}
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ) : (
+                  ) : filteredRegistrations.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="p-10 text-center text-slate-500 dark:text-slate-400">
+                        <div className="flex flex-col items-center justify-center gap-2 py-4">
+                          <span className="material-symbols-outlined text-[32px] text-slate-400 dark:text-slate-600">search_off</span>
+                          <span className="font-bold text-sm text-slate-700 dark:text-slate-300">
+                            {isAmharic ? 'ምንም የሚመሳሰል መዝገብ አልተገኘም' : 'No matching motorcycle records found.'}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveTableTab('approved');
+                            }}
+                            className="px-3 py-1.5 bg-yellow-500 text-[#0B1E48] font-extrabold text-xs rounded-xl shadow-xs hover:bg-yellow-400 cursor-pointer"
+                          >
+                            {isAmharic ? 'የፀደቁትን አሳይ' : 'Show Approved Permits'}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
                       paginatedRegistrations.map((reg, index) => {
                         return (
                           <tr key={reg.id} className="h-16 align-middle hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
@@ -576,11 +544,20 @@ export const TablesPage: React.FC<TablesPageProps> = ({
               {/* Mobile Cards / Collapsed Rows View (< md) */}
               <div className="block md:hidden divide-y divide-slate-200 dark:divide-slate-800">
                 {registrations.length === 0 ? (
-                  <div className="p-8 text-center text-slate-500 font-bold text-xs">
-                    {isAmharic ? 'ምንም መዝገብ አልተገኘም' : 'No vehicle registrations stored.'}
+                  <div className="p-10 text-center text-slate-500 dark:text-slate-400 space-y-1.5">
+                    <span className="material-symbols-outlined text-[36px] text-slate-400 dark:text-slate-600 mx-auto block">inbox</span>
+                    <p className="font-bold text-xs text-slate-700 dark:text-slate-200">
+                      {isAmharic ? 'ምንም የተመዘገቡ መረጃዎች የሉም' : 'No Vehicle Registrations Found'}
+                    </p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
+                      {isAmharic
+                        ? 'አዲስ የሞተር ብስክሌት መረጃዎች ሲመዘገቡ እዚህ ይታያሉ።'
+                        : 'Vehicle permit applications will appear here once submitted.'}
+                    </p>
                   </div>
                 ) : filteredRegistrations.length === 0 ? (
                   <div className="p-8 text-center text-slate-500 text-xs">
+                    <span className="material-symbols-outlined text-[32px] text-slate-400 dark:text-slate-600 mx-auto block mb-1">search_off</span>
                     {isAmharic ? 'ምንም የሚመሳሰል መዝገብ አልተገኘም' : 'No matching motorcycle records found.'}
                   </div>
                 ) : (
@@ -754,8 +731,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                 )}
               </div>
             </div>
-          )
-        )}
+          )}
 
         {/* --- VIEW 2: PRINT ORDERS TABLE --- */}
         {activeTableTab === 'print_orders' && (
@@ -775,13 +751,23 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {printOrders.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="p-8 text-center text-slate-500 font-bold">
-                        {isAmharic ? 'ምንም የሕትመት ትእዛዝ አልተገኘም' : 'No print orders stored.'}
+                      <td colSpan={6} className="p-10 text-center text-slate-500 dark:text-slate-400">
+                        <div className="flex flex-col items-center justify-center gap-1.5 max-w-sm mx-auto">
+                          <span className="material-symbols-outlined text-[36px] text-slate-400 dark:text-slate-600">print_disabled</span>
+                          <span className="font-bold text-xs text-slate-700 dark:text-slate-200">
+                            {isAmharic ? 'ምንም የሕትመት ትእዛዝ አልተገኘም' : 'No Print Orders Found'}
+                          </span>
+                          <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                            {isAmharic
+                              ? 'አዲስ የሕትመት ትእዛዝ ሲፈጠር በዚህ ሰንጠረዥ ውስጥ ይዘረዘራል።'
+                              : 'Batched ID badges and sticker print orders will appear here.'}
+                          </span>
+                        </div>
                       </td>
                     </tr>
                   ) : filteredPrintOrders.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="p-8 text-center text-slate-500">
+                      <td colSpan={6} className="p-8 text-center text-slate-500 dark:text-slate-400">
                         {isAmharic ? 'ምንም የሚመሳሰል የሕትመት ትእዛዝ አልተገኘም' : 'No matching print orders found.'}
                       </td>
                     </tr>
@@ -835,16 +821,32 @@ export const TablesPage: React.FC<TablesPageProps> = ({
             </div>
 
             <div className="block md:hidden divide-y divide-slate-100 dark:divide-slate-800">
-              {paginatedPrintOrders.map((order) => (
-                <div key={order.id} className="p-3.5 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono font-bold text-yellow-600">{order.id}</span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 dark:bg-slate-700">{order.status}</span>
-                  </div>
-                  <p className="text-xs text-slate-700 dark:text-slate-300 font-bold">{order.totalItems} ID Badges</p>
-                  <p className="text-[11px] text-slate-400">{order.orderDate}</p>
+              {printOrders.length === 0 ? (
+                <div className="p-8 text-center text-slate-500 dark:text-slate-400 space-y-1">
+                  <span className="material-symbols-outlined text-[32px] text-slate-400 dark:text-slate-600 mx-auto block">print_disabled</span>
+                  <p className="font-bold text-xs text-slate-700 dark:text-slate-200">
+                    {isAmharic ? 'ምንም የሕትመት ትእዛዝ አልተገኘም' : 'No Print Orders Found'}
+                  </p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
+                    {isAmharic ? 'አዲስ የሕትመት ትእዛዝ ሲፈጠር እዚህ ይታያል።' : 'Print orders will appear here.'}
+                  </p>
                 </div>
-              ))}
+              ) : filteredPrintOrders.length === 0 ? (
+                <div className="p-8 text-center text-slate-500 text-xs">
+                  {isAmharic ? 'ምንም የሚመሳሰል የሕትመት ትእዛዝ አልተገኘም' : 'No matching print orders found.'}
+                </div>
+              ) : (
+                paginatedPrintOrders.map((order) => (
+                  <div key={order.id} className="p-3.5 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono font-bold text-yellow-600">{order.id}</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 dark:bg-slate-700">{order.status}</span>
+                    </div>
+                    <p className="text-xs text-slate-700 dark:text-slate-300 font-bold">{order.totalItems} ID Badges</p>
+                    <p className="text-[11px] text-slate-400">{order.orderDate}</p>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         )}

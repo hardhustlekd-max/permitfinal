@@ -468,9 +468,6 @@ export async function updateRegistrationStatusInDb(
 
 export async function fetchAllRegistrationsFromDb(): Promise<MotorcycleRegistration[]> {
   loadStateFromLocalStorage();
-  if (inMemory.registrations.length === 0) {
-    seedSampleDatabaseData().catch(() => {});
-  }
   return inMemory.registrations;
 }
 
@@ -999,10 +996,7 @@ async function pushUnsyncedLocalRecordsToCloud(remoteRegs?: MotorcycleRegistrati
 
 // --- LOCAL STORAGE SYNCHRONIZER ---
 export async function syncAllCollectionsWithDb(): Promise<void> {
-  const loaded = loadStateFromLocalStorage();
-  if (!loaded || inMemory.registrations.length === 0) {
-    await seedSampleDatabaseData();
-  }
+  loadStateFromLocalStorage();
   lastSyncTime = new Date();
   isCloudConnected = true;
   notifySyncStatus();

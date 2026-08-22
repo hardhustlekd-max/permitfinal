@@ -29,7 +29,6 @@ interface MunicipalDashboardOverviewProps {
   verificationLogs?: VerificationLog[];
   onQuickAction?: (actionKey: string) => void;
   onAddVerificationLog?: (log: VerificationLog) => void;
-  onSeedSampleData?: () => void;
 }
 
 export const MunicipalDashboardOverview: React.FC<MunicipalDashboardOverviewProps> = ({
@@ -42,7 +41,6 @@ export const MunicipalDashboardOverview: React.FC<MunicipalDashboardOverviewProp
   verificationLogs = [],
   onQuickAction,
   onAddVerificationLog,
-  onSeedSampleData,
 }) => {
   const isAmharic = lang === 'am';
 

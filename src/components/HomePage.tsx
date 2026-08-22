@@ -23,7 +23,6 @@ import {
   updatePrintOrderStatusInDb,
   saveVerificationLogToDb,
   syncAllCollectionsWithDb,
-  seedSampleDatabaseData,
 } from '../services/dbService';
 import { MunicipalDashboardOverview } from './MunicipalDashboardOverview';
 import { FormsPage } from './FormsPage';
@@ -132,23 +131,6 @@ export const HomePage: React.FC<HomePageProps> = ({
     } catch (err) {
       addToast(
         isAmharic ? 'የፍተሻ መዝገብ ማስቀመጥ አልተሳካም!' : 'Failed to save verification log to database!',
-        'error'
-      );
-    }
-  };
-
-  const handleSeedSampleData = async () => {
-    try {
-      await seedSampleDatabaseData();
-      addToast(
-        isAmharic
-          ? 'ዳታቤዙ በናሙና መዝገቦች በተሳካ ሁኔታ ተሞልቷል!'
-          : 'Database successfully seeded with high-quality sample records!',
-        'success'
-      );
-    } catch (err) {
-      addToast(
-        isAmharic ? 'ዳታቤዝ መሙላት አልተሳካም!' : 'Failed to seed sample database records!',
         'error'
       );
     }
@@ -1025,7 +1007,6 @@ export const HomePage: React.FC<HomePageProps> = ({
               verificationLogs={verificationLogs}
               onQuickAction={handleQuickAction}
               onAddVerificationLog={handleAddVerificationLog}
-              onSeedSampleData={handleSeedSampleData}
             />
           )}
 
@@ -1059,7 +1040,6 @@ export const HomePage: React.FC<HomePageProps> = ({
               onRejectRegistration={handleRejectRegistration}
               onUpdateOrderStatus={handleUpdateOrderStatus}
               onAddVerificationLog={handleAddVerificationLog}
-              onSeedSampleData={handleSeedSampleData}
             />
           )}
 
