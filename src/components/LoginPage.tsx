@@ -71,7 +71,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
     <div className="w-full h-full flex-1 flex flex-col font-sans text-on-surface bg-surface min-h-0 overflow-y-auto">
       
       {/* ================= TOP NAVBAR ================= */}
-      <header className="w-full bg-[#0B1E48] text-white border-b-2 border-yellow-500 shadow-md px-3 sm:px-8 py-2.5 sm:py-3 flex items-center justify-between shrink-0 z-50 gap-2 sm:gap-4">
+      <header className="w-full bg-[#0B1E48] text-white shadow-md px-3 sm:px-8 py-2.5 sm:py-3 flex items-center justify-between shrink-0 z-50 gap-2 sm:gap-4">
         
         {/* Left Brand & Logo */}
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 shrink">

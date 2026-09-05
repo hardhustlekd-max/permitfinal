@@ -1,4 +1,5 @@
 export const APP_LOGO = '/logo.png';
+export const APP_FLAG = '/flag.jpg';
 
 export const BAHIR_DAR_SUBCITIES = [
   { en: 'Fasilo', am: 'ፋሲሎ' },

@@ -1203,10 +1203,10 @@ export const HomePage: React.FC<HomePageProps> = ({
       <div className="md:pl-64 flex-1 flex flex-col min-w-0 h-full max-h-full overflow-hidden">
         
         {/* MOBILE NAVIGATION HEADER (md:hidden) */}
-        <header className="sticky top-0 z-50 bg-[#0B1E48] text-white border-b-2 border-yellow-500 shadow-md px-3 sm:px-6 py-2.5 md:hidden shrink-0 relative overflow-hidden">
-          {/* Animated Navbar Action Loading Progress Bar */}
+        <header className="sticky top-0 z-50 bg-[#0B1E48] text-white shadow-md px-3 sm:px-6 py-2.5 md:hidden shrink-0 relative overflow-hidden">
+          {/* Animated Navbar Action Loading Progress Bar (Under top navbar) */}
           {actionLoadingState.isLoading && (
-            <div className="absolute top-0 left-0 right-0 h-[3px] bg-white/20 overflow-hidden z-50 pointer-events-none">
+            <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/20 overflow-hidden z-50 pointer-events-none">
               <div className="h-full bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-400 animate-navbar-progress rounded-full" />
             </div>
           )}
@@ -1313,16 +1313,6 @@ export const HomePage: React.FC<HomePageProps> = ({
 
               {/* Right Controls (UNIFIED MENU TOGGLE BUTTON) */}
               <div className="flex items-center gap-1.5 shrink-0">
-                {/* Mobile Action Loading Badge */}
-                {actionLoadingState.isLoading && (
-                  <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 text-[11px] font-bold shrink-0 animate-pulse">
-                    <Icon className="material-symbols-outlined text-[13px] animate-spin text-yellow-400">progress_activity</Icon>
-                    <span className="truncate max-w-[100px] hidden xs:inline">
-                      {isAmharic ? (actionLoadingState.labelAm || 'እየተከናወነ...') : (actionLoadingState.labelEn || 'Processing...')}
-                    </span>
-                  </div>
-                )}
-
                 {/* Mobile Drawer Menu Toggle */}
                 <button
                   type="button"
@@ -1798,10 +1788,10 @@ export const HomePage: React.FC<HomePageProps> = ({
         )}
 
         {/* DESKTOP TOP BAR (hidden md:flex) */}
-        <header className="hidden md:flex items-center justify-between px-4 sm:px-6 py-3 bg-white text-slate-900 border-b border-slate-200/90 sticky top-0 z-40 shadow-2xs relative overflow-hidden">
-          {/* Animated Navbar Action Loading Progress Bar */}
+        <header className="hidden md:flex items-center justify-between px-4 sm:px-6 py-3 bg-white text-slate-900 sticky top-0 z-40 shadow-2xs relative overflow-hidden">
+          {/* Animated Navbar Action Loading Progress Bar (Under top navbar) */}
           {actionLoadingState.isLoading && (
-            <div className="absolute top-0 left-0 right-0 h-[3px] bg-blue-100 dark:bg-slate-800 overflow-hidden z-50 pointer-events-none">
+            <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-blue-100 dark:bg-slate-800 overflow-hidden z-50 pointer-events-none">
               <div className="h-full bg-gradient-to-r from-blue-600 via-amber-400 to-blue-600 animate-navbar-progress rounded-full" />
             </div>
           )}
@@ -1852,16 +1842,6 @@ export const HomePage: React.FC<HomePageProps> = ({
                 {activePage === 'settings' && (isAmharic ? 'ቅንብሮች' : 'Settings')}
               </span>
             </h2>
-
-            {/* Desktop Navbar Action Loading Badge */}
-            {actionLoadingState.isLoading && (
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800/80 text-blue-800 dark:text-blue-300 text-xs font-bold animate-pulse shadow-2xs select-none">
-                <Icon className="material-symbols-outlined text-[15px] animate-spin text-blue-600 dark:text-blue-400">progress_activity</Icon>
-                <span className="truncate max-w-[240px]">
-                  {isAmharic ? (actionLoadingState.labelAm || 'እየተከናወነ ነው...') : (actionLoadingState.labelEn || 'Processing action...')}
-                </span>
-              </div>
-            )}
           </div>
 
           {/* Right Side Tools: Notifications, Mail, Date Dropdown, User Dropdown */}

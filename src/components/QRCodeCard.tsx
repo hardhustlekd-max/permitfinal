@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Icon } from './ui/Icon';
 import { QRCodeSVG } from 'qrcode.react';
-import { MotorcycleRegistration, Language, APP_LOGO } from '../types';
+import { MotorcycleRegistration, Language, APP_LOGO, APP_FLAG } from '../types';
 import { SmartImage } from './SmartImage';
 
 interface QRCodeCardProps {
@@ -164,22 +164,15 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({ registration, lang }) =>
             {/* Right Column: Flag + Moto Slogan */}
             <div className="flex flex-col items-end text-right shrink-0 z-10 w-[115px]">
               <div className="flex items-center gap-1.5">
-                <div className="w-8 h-5 rounded-xs overflow-hidden flex flex-col border border-white/60 shadow-2xs shrink-0 relative">
-                  <div className="h-1/3 bg-[#009b57] w-full" />
-                  <div className="h-1/3 bg-[#fed100] w-full" />
-                  <div className="h-1/3 bg-[#da121a] w-full" />
-                  {/* Center Emblem: Blue disc with yellow pentagram star */}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="w-3.5 h-3.5 rounded-full bg-[#0a2351] flex items-center justify-center border border-white/30 shadow-2xs">
-                      <svg className="w-2.5 h-2.5 text-[#fed100]" viewBox="0 0 24 24" fill="currentColor">
-                        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-                      </svg>
-                    </div>
-                  </div>
+                <div className="w-10 h-5.5 rounded-xs overflow-hidden border border-white/80 shadow-2xs shrink-0 relative bg-black/20">
+                  <img
+                    src={APP_FLAG}
+                    alt="Ethiopian Flag"
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
                 </div>
               </div>
-
-
 
               <div className="mt-0.5 flex justify-end">
                 <Icon className="material-symbols-outlined text-[28px] text-white opacity-95">two_wheeler</Icon>
