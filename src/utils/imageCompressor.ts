@@ -103,3 +103,17 @@ export async function compressImageBase64(
   });
 }
 
+/**
+ * Creates an ultra-lightweight micro thumbnail (max 120x120 JPEG, ~4-8KB)
+ * for instant table row and avatar rendering.
+ */
+export async function generateThumbnailBase64(
+  base64Str: string,
+  size = 120,
+  quality = 0.65
+): Promise<string> {
+  if (!base64Str || typeof base64Str !== 'string') return '';
+  if (!base64Str.startsWith('data:image/')) return base64Str;
+  return compressImageBase64(base64Str, size, size, quality);
+}
+

@@ -829,7 +829,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                                           className="w-14 h-16 rounded-lg overflow-hidden border border-slate-300 dark:border-slate-700 shrink-0 bg-slate-900 cursor-pointer relative group shadow-2xs"
                                           title={isAmharic ? 'የባለቤት ፎቶ' : 'Owner Portrait'}
                                         >
-                                          <SmartImage src={reg.userPortraitPhoto || reg.ownerPhoto} alt="Portrait" fallbackIcon="person" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                                          <SmartImage src={reg.userPortraitThumbnail || reg.userPortraitPhoto || reg.ownerPhoto} alt="Portrait" fallbackIcon="person" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
                                             <Icon className="material-symbols-outlined text-[16px]">zoom_in</Icon>
                                           </div>
@@ -992,7 +992,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({
                                       className="w-12 h-14 rounded-lg overflow-hidden border border-slate-300 dark:border-slate-700 shrink-0 bg-slate-900 cursor-pointer relative group shadow-2xs"
                                       title={isAmharic ? 'የባለቤት ፎቶ' : 'Owner Portrait'}
                                     >
-                                      <SmartImage src={reg.userPortraitPhoto || reg.ownerPhoto} alt="Portrait" fallbackIcon="person" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                                      <SmartImage src={reg.userPortraitThumbnail || reg.userPortraitPhoto || reg.ownerPhoto} alt="Portrait" fallbackIcon="person" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
                                         <Icon className="material-symbols-outlined text-[16px]">zoom_in</Icon>
                                       </div>

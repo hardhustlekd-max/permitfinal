@@ -21,6 +21,7 @@ export interface MotorcycleRegistration {
   fullName: string;
   phone: string;
   userPortraitPhoto?: string;
+  userPortraitThumbnail?: string;
   nationalIdPhoto: string;
   nationalIdBackPhoto?: string;
   drivingLicensePhoto: string;
