@@ -52,33 +52,38 @@ html {
 }
 
 :root, html.light {
-  --color-primary: #0B1E48;
-  --color-primary-hover: #071330;
-  --color-primary-container: #F1F5F9;
-  --color-primary-light: #F1F5F9;
-  --color-secondary-container: #F1F5F9;
-  --color-surface: #F8F9FA;
-  --color-on-surface: #0F172A;
-  --color-on-surface-variant: #1E293B;
-  --color-surface-container: #F1F5F9;
+  --color-primary: #0f2a5e;
+  --color-primary-hover: #0b1f48;
+  --color-primary-container: #e8edf8;
+  --color-primary-light: #e8edf8;
+  --color-secondary-container: #e8edf8;
+  --color-surface: #f5f6fa;
+  --color-on-surface: #1a1d2e;
+  --color-on-surface-variant: #4b5563;
+  --color-surface-container: #eef0f7;
   --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #F8F9FA;
+  --color-surface-container-low: #f8f9fa;
   --color-surface-container-high: #e2e8f0;
   --color-surface-container-highest: #cbd5e1;
   --color-surface-bright: #ffffff;
-  --color-surface-dim: #F8F9FA;
-  --color-surface-variant: #F1F5F9;
-  --color-secondary: #334155; /* Slate 700 - high contrast WCAG AAA */
-  --color-outline: #64748b; /* Slate 500 - legible muted text and icon tint */
-  --color-outline-variant: #cbd5e1; /* Slate 300 - container borders */
-  --color-brand-indigo: #0B1E48;
-  --color-topnav: #0B1E48;
-  --color-topnav-hover: #071330;
-  --color-topnav-dark: #050d24;
-  --color-sidebar-bg: #0B1E48;
-  --color-sidebar-hover: #071330;
-  --color-sidebar-text: #e2e8f0;
+  --color-surface-dim: #f5f6fa;
+  --color-surface-variant: #eef0f7;
+  --color-secondary: #0f2a5e;
+  --color-outline: #dde1ee;
+  --color-outline-variant: #dde1ee;
+  --color-brand-indigo: #0f2a5e;
+  --color-topnav: #0f2a5e;
+  --color-topnav-hover: #0b1f48;
+  --color-topnav-dark: #071533;
+  --color-sidebar-bg: #0f2a5e;
+  --color-sidebar-hover: #0b1f48;
+  --color-sidebar-text: #e8edf8;
   --color-sidebar-active-text: #ffffff;
+  --color-accent: #e85d26;
+  --color-card: #ffffff;
+  --color-border: #dde1ee;
+  --color-muted: #eef0f7;
+  --color-muted-foreground: #6b7280;
   color-scheme: light;
 }
 
